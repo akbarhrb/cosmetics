@@ -3,6 +3,7 @@ import { Package, Receipt, Store, BarChart3, Eye } from 'lucide-react';
 import Header from '../components/Header';
 import { Link } from 'react-router-dom';
 import {Card, CardHeader, CardTitle,CardContent,CardDescription} from '../components/Card';
+import Button from '../components/Button';
 
 
 
@@ -28,7 +29,7 @@ function Index(){
                     </CardHeader>
                     <CardContent>
                         <Link to="/create-receipt">
-                            <button className='bg-white text-black rounded-xl p-3 hover:bg-blue-400' >New Recipe</button>
+                            <Button className='' variant='white' >New Recipe</Button>
                         </Link>
                     </CardContent>
                     </Card>
@@ -39,7 +40,7 @@ function Index(){
                     </CardHeader>
                     <CardContent>
                         <Link to="/inventory">
-                            <button className='bg-white w-full text-black rounded-xl p-3 hover:bg-blue-400'>View Inventory</button>
+                            <Button className='' variant='white'>View Inventory</Button>
                         </Link>
                     </CardContent>
                     </Card>
@@ -50,7 +51,7 @@ function Index(){
                     </CardHeader>
                     <CardContent>
                         <Link to="/pharmacies">
-                            <button className='bg-white text-black hover:bg-blue-400 rounded-xl p-3' >View Pharmacies</button>
+                            <Button className='' variant='white'>View Pharmacies</Button>
                         </Link>
                     </CardContent>
                     </Card>

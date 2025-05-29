@@ -90,7 +90,7 @@ function Pharmacies(){
                         <h1 className="text-3xl font-bold text-gray-900">Pharmacy Directory</h1>
                         <p className="text-gray-600 mt-2">Manage your pharmacy clients and their information</p>
                     </div>
-                    <Button className="bg-green-500" onClick={toggleForm}>{showForm ? "Cancel" : "Add Pharmacy" }</Button>
+                    <Button className="" variant="success" onClick={toggleForm}>{showForm ? "Cancel" : "Add Pharmacy" }</Button>
                 </div>
               {/* show form*/}
               {showForm && (
@@ -112,7 +112,7 @@ function Pharmacies(){
                     <input type="text" value={address} onChange={(e)=>setAddress(e.target.value)} className="w-full border px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter address..."/>
                   </div>
 
-                  <button type="submit" onClick={addPharmacy} className="bg-green-600 w-full text-white mt-4 px-4 py-2 rounded-lg hover:bg-green-700 transition" >Submit</button>
+                  <Button type="submit" onClick={addPharmacy} variant="success" className="w-[100%]" >Submit</Button>
                 </form>
               )}
               {/* Pharmacies List */}
