@@ -24,7 +24,7 @@ function Index(){
                     <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
                     <CardHeader>
                         <CardTitle className="flex items-center"><Receipt className="mr-2 h-5 w-5" />Create New Receipt</CardTitle>
-                        <CardDescription className="text-blue-100">Generate a professional receipt for a pharmacy order</CardDescription>
+                        <CardDescription className="text-white">Generate a professional receipt for a pharmacy order</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Link to="/create-receipt">
@@ -35,7 +35,7 @@ function Index(){
                     <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
                     <CardHeader>
                         <CardTitle className="flex items-center"><Package className="mr-2 h-5 w-5" />Manage Inventory</CardTitle>
-                        <CardDescription className="text-blue-100">Update product quantities and add new items</CardDescription>
+                        <CardDescription className="text-white">Update product quantities and add new items</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Link to="/inventory">
@@ -46,7 +46,7 @@ function Index(){
                     <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
                     <CardHeader>
                         <CardTitle className="flex items-center"><Store className="mr-2 h-5 w-5" />Pharmacy Directory</CardTitle>
-                        <CardDescription className="text-blue-100">Manage your pharmacy clients and their information</CardDescription>
+                        <CardDescription className="text-white">Manage your pharmacy clients and their information</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Link to="/pharmacies">
