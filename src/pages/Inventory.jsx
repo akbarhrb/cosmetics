@@ -7,18 +7,20 @@ import { Plus } from "lucide-react";
 function Inventory(){
 
     const [items , setItems] = useState([]);
+    const [filteredItems , setFilteredItems] = useState([]);
     const [loading , setLoading] = useState(false);
+    const [searchTerm , setSearchTerm] = useState('');
     function getItems() {
         setLoading(true);
         axios
         .get("http://makeup-api.herokuapp.com/api/v1/products.json")
         .then((res) => {
             setItems(res.data);
-            setLoading(false); // ✅ move this here
+            setLoading(false); 
         })
         .catch((error) => {
             console.error(error);
-            setLoading(false); // ✅ handle error case too
+            setLoading(false); 
         });
   }
 
@@ -26,11 +28,16 @@ function Inventory(){
         getItems(); 
         
     }, []);
+
+    //search function
+    function search(){
+        setFilteredItems(items.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())));  
+        
+    }
     useEffect(()=>{
-        if(items.length>1){
-            console.log(items[0]);
-        }
-    },);
+        search();
+    }, [searchTerm])
+    
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             {/* header and navbar */}
@@ -53,8 +60,45 @@ function Inventory(){
                         </div>
                     )
                 }
+                {/* search bar */}
+                {!loading && (
+                    <div className=" flex flex-row items-center justify-center" >
+                        <input
+                            onChange={(e)=>setSearchTerm(e.target.value)}
+                            type="text"
+                            placeholder="search inventory here..."
+                            className="w-[95%] px-4 py-2 my-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ease-in-out"
+                        />
+                    </div>
+                )}
                 <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
-                    {items.map( item => (
+                    { filteredItems.map( item => (
+                    
+                        <Card className="m-4" >
+                            <CardHeader className="justify-start">
+                                
+                                <CardTitle>{item.name}</CardTitle>
+                                <CardDescription className="m-1" ><p className="text-gray-600" >{item.product_type}</p></CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                               <div className="flex flex-row justify-between w-full">
+                                <div className="flex flex-col text-left ml-2">
+                                    <div className="my-1" >Quantity</div>
+                                    <div className="my-1">Price</div>
+                                    <div className="my-1">Total Value</div>
+                                </div>
+                                <div className="flex flex-col text-right mr-2">
+                                    <div className="my-1">10</div>
+                                    <div className="text-green-700 my-1" >12$</div>
+                                    <div className="my-1">120$</div>
+                                </div>
+                               </div>
+                            </CardContent>
+                        </Card>
+                    ) )}
+                </div>
+                <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
+                    { filteredItems.length == 0 && items.map( item => (
                     
                         <Card className="m-4" >
                             <CardHeader className="justify-start">
