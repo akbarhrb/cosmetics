@@ -6,9 +6,12 @@ import { MapPin , Phone , Edit , Store } from "lucide-react";
 import {Card, CardHeader, CardTitle,CardContent,CardDescription} from '../components/Card';
 function Pharmacies(){
     const [showForm, setShowForm] = useState(false);
+    const [updateForm , setUpdateForm] = useState(false);
 
     const toggleForm = () => {
+      setUpdateForm(false);
       setShowForm((prev) => !prev);
+      
     };
     const [pharmacyName , setName] = useState('');
     const [owner , setOwner] = useState('');
@@ -19,7 +22,7 @@ function Pharmacies(){
       id: 1,
       name: 'City Central Pharmacy',
       owner: 'Dr. Ahmed Hassan',
-      phone: '+961 03 123 467',
+      phoneNumber: '96103123467',
       address: 'Chevrolet Main Street, Alfa Building',
       status: 'active',
       totalOrders: 15,
@@ -29,7 +32,7 @@ function Pharmacies(){
       id: 2,
       name: 'Village Health Pharmacy',
       owner: 'Mrs. Sarah Johnson',
-      phone: '+961 76 123 467',
+      phoneNumber: '96176123467',
       address: 'Chiyah, Village Center',
       status: 'active',
       totalOrders: 12,
@@ -39,7 +42,7 @@ function Pharmacies(){
       id: 3,
       name: 'Green Cross Pharmacy',
       owner: 'Mr. Mohamed Ali',
-      phone: '+961 03 455 467',
+      phoneNumber: '96103455467',
       address: 'zalka, KFC North District',
       status: 'active',
       totalOrders: 8,
@@ -49,7 +52,7 @@ function Pharmacies(){
       id: 4,
       name: 'Sunset Pharmacy',
       owner: 'Dr. Fatima El-Zahra',
-      phone: '+961 70 123 555',
+      phoneNumber: '96170123555',
       address: 'jnoub, West Side',
       status: 'inactive',
       totalOrders: 5,
@@ -62,12 +65,13 @@ function Pharmacies(){
 
     function addPharmacy(e){
       e.preventDefault();
-      setId++;
+      
+      setId(id +1);
       const newPharmacy = {
         'id': id,
         'name' : pharmacyName,
         'owner' : owner,
-        'phone' : phoneNumber,
+        'phoneNumber' : phoneNumber,
         'address' : address,
         'status' : 'active',
         'totalOrders' : 0,
@@ -79,6 +83,51 @@ function Pharmacies(){
       setPhoneNumber('');
       setAddress('');
     }
+    //edit function
+    let [idToUpdate , setIdToUpdate] = useState(null);
+    function EditPharmacy(id){
+      console.log(id);
+      setShowForm(true);
+      setUpdateForm(true);
+      let pharmacy = {};
+      for(let i=0 ; i< pharmacies.length ; i++){
+        if(pharmacies[i].id == id){
+          pharmacy = pharmacies[i];
+        }
+      }
+      setIdToUpdate(pharmacy.id);
+      setName(pharmacy.name);
+      setOwner(pharmacy.owner);
+      setPhoneNumber(pharmacy.phoneNumber);
+      setAddress(pharmacy.address);
+      
+      
+    }
+    function updatePharmacy(e){
+      e.preventDefault();
+      const updatedPharmacies = pharmacies.map(p=>{
+        if(p.id === idToUpdate){
+          return {
+            ...p,
+            name : pharmacyName,
+            owner: owner,
+            phoneNumber : phoneNumber,
+            address : address
+          };
+          
+        }
+        return p;
+      });
+      setPharmacies(updatedPharmacies);
+      setUpdateForm(false);
+      setShowForm(false);
+      setIdToUpdate(null);
+      setName('');
+      setOwner('');
+      setPhoneNumber();
+      setAddress('');
+    }
+    
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -112,7 +161,7 @@ function Pharmacies(){
                     <input type="text" value={address} onChange={(e)=>setAddress(e.target.value)} className="w-full border px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter address..."/>
                   </div>
 
-                  <Button type="submit" onClick={addPharmacy} variant="success" className="w-[100%]" >Submit</Button>
+                  <Button type="submit" onClick={(e)=> {updateForm? updatePharmacy(e): addPharmacy(e)} } variant="success" className="w-[100%]" >{updateForm ? "Update" : "Submit"}</Button>
                 </form>
               )}
               {/* Pharmacies List */}
@@ -132,7 +181,7 @@ function Pharmacies(){
                 <div className="space-y-3 mt-3">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Phone className="h-4 w-4" />
-                    <span>{pharmacy.phone}</span>
+                    <span>{pharmacy.phoneNumber}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <MapPin className="h-4 w-4" />
@@ -150,14 +199,17 @@ function Pharmacies(){
                       </div>
                     </div>
                   </div>
-                  <div className="pt-3">
+                  <div className="pt-3 flex flex-row">
                     <Button variant="outline" className="w-full">
                       <Link to={`/create-receipt?pharmacy=${pharmacy.id}`} className="flex items-center justify-center w-full">
                         Create Receipt
                       </Link>
                     </Button>
+                    
+                    <Edit onClick={()=> EditPharmacy(pharmacy.id)} className="w-fit h-full p-3 text-white bg-green-500 rounded-xl mx-2 hover:bg-green-600 transition-all ease-in cursor-pointer "/>
                   </div>
                 </div>
+
               </CardContent>
             </Card>
           ))}

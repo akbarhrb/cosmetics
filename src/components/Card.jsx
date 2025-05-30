@@ -1,8 +1,9 @@
+import Button from "./Button";
+
 export function Card({ className = '', children }) {
   return (
     <div
-      className={`rounded-2xl border bg-white p-6 shadow-md flex flex-col items-center justify-center text-center ${className}`}
-    >
+      className={` rounded-2xl border cursor-pointer bg-white p-3 shadow-lg hover:shadow-xl transition-all hover:scale-105 flex flex-col items-center justify-evenly text-center ${className}`}>
       {children}
     </div>
   );
@@ -26,16 +27,21 @@ export function CardTitle({ className = '', children }) {
 
 export function CardDescription({ className = '', children }) {
   return (
-    <p className={`text-m text-gray-500 ${className}`}>
+    <p className={`text-m text-gray-100 ${className}`}>
       {children}
     </p>
   );
 }
 
-export function CardContent({ className = '', children }) {
+export function CardContent({ className = '', children , }) {
   return (
     <div className={`flex flex-col w-full items-center justify-center ${className}`}>
       {children}
     </div>
+  );
+}
+export function CardButton({className="" , children, ...props}){
+  return (
+    <Button {...props} className={` ${className}`} >{children}</Button>
   );
 }

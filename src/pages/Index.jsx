@@ -2,7 +2,7 @@
 import { Package, Receipt, Store, BarChart3, Eye } from 'lucide-react';
 import Header from '../components/Header';
 import { Link } from 'react-router-dom';
-import {Card, CardHeader, CardTitle,CardContent,CardDescription} from '../components/Card';
+import {Card, CardHeader, CardTitle,CardContent,CardDescription, CardButton} from '../components/Card';
 import Button from '../components/Button';
 
 
@@ -22,38 +22,34 @@ function Index(){
                 </div>
                 {/* Actions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                    <Card className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white ">
                     <CardHeader>
                         <CardTitle className="flex items-center"><Receipt className="mr-2 h-5 w-5" />Create New Receipt</CardTitle>
-                        <CardDescription className="text-white">Generate a professional receipt for a pharmacy order</CardDescription>
+                        <CardDescription className="">Generate a professional receipt for a pharmacy order</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <Link to="/create-receipt">
-                            <Button className='' variant='white' >New Recipe</Button>
-                        </Link>
-                    </CardContent>
+                    <Link to="/create-receipt">
+                        <CardButton variant="white" >New Recipe</CardButton>
+                    </Link>
                     </Card>
-                    <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
+
+                    <Card className="bg-gradient-to-b from-green-500 to-green-700 text-white ">
                     <CardHeader>
                         <CardTitle className="flex items-center"><Package className="mr-2 h-5 w-5" />Manage Inventory</CardTitle>
-                        <CardDescription className="text-white">Update product quantities and add new items</CardDescription>
+                        <CardDescription className="">Update product quantities and add new items</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <Link to="/inventory">
-                            <Button className='' variant='white'>View Inventory</Button>
-                        </Link>
-                    </CardContent>
+                    <Link to="/inventory">
+                        <CardButton variant="white">View Inventory</CardButton>
+                    </Link>
                     </Card>
-                    <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
+
+                    <Card className="bg-gradient-to-bl from-blue-700 via-blue-600 to-blue-500 text-white">
                     <CardHeader>
                         <CardTitle className="flex items-center"><Store className="mr-2 h-5 w-5" />Pharmacy Directory</CardTitle>
-                        <CardDescription className="text-white">Manage your pharmacy clients and their information</CardDescription>
+                        <CardDescription className="">Manage your pharmacy clients and their information</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <Link to="/pharmacies">
-                            <Button className='' variant='white'>View Pharmacies</Button>
-                        </Link>
-                    </CardContent>
+                    <Link to="/pharmacies">
+                        <CardButton variant="white">View Pharmacies</CardButton>
+                    </Link>
                     </Card>
                 </div>
                 
