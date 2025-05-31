@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
+import Input from "../components/Input";
 import axios from "axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/Card";
 import Button from "../components/Button";
-import { Plus } from "lucide-react";
 function Inventory(){
 
     const [items , setItems] = useState([]);
@@ -63,12 +63,7 @@ function Inventory(){
                 {/* search bar */}
                 {!loading && (
                     <div className=" flex flex-row items-center justify-center" >
-                        <input
-                            onChange={(e)=>setSearchTerm(e.target.value)}
-                            type="text"
-                            placeholder="search inventory here..."
-                            className="w-[95%] px-4 py-2 my-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ease-in-out"
-                        />
+                        <Input type="text" className="my-2" placeholder="search inventory here..." onChange={(e)=>setSearchTerm(e.target.value)} />   
                     </div>
                 )}
                 <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
@@ -97,8 +92,8 @@ function Inventory(){
                         </Card>
                     ) )}
                 </div>
-                <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
-                    { filteredItems.length == 0 && items.map( item => (
+                <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">      
+                    { filteredItems.length === 0 && items.map( item => (
                     
                         <Card className="m-4" >
                             <CardHeader className="justify-start">

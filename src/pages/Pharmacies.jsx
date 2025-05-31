@@ -1,8 +1,9 @@
 import Header from "../components/Header";
 import Button from "../components/Button";
-import { use, useState } from "react";
+import Input from "../components/Input";
+import {  useState } from "react";
 import { Link } from "react-router-dom";
-import { MapPin , Phone , Edit , Store } from "lucide-react";
+import { MapPin , Phone , Edit  } from "lucide-react";
 import {Card, CardHeader, CardTitle, CardContent ,CardDescription} from '../components/Card';
 function Pharmacies(){
     const [showForm, setShowForm] = useState(false);
@@ -91,7 +92,7 @@ function Pharmacies(){
       setUpdateForm(true);
       let pharmacy = {};
       for(let i=0 ; i< pharmacies.length ; i++){
-        if(pharmacies[i].id == id){
+        if(pharmacies[i].id === id){
           pharmacy = pharmacies[i];
         }
       }
@@ -146,19 +147,19 @@ function Pharmacies(){
                 <form className="mt-6 mb-6 space-y-4 p-4 border rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out opacity-100 scale-100 animate-fade-in">
                   <div>
                     <label className="block mb-1 text-gray-700">Pharmacy Name</label>
-                    <input type="text" value={pharmacyName} onChange={(e)=>setName(e.target.value)} className="w-full border px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter pharmacy name" />
+                    <Input type="text" value={pharmacyName} onChange={(e)=>setName(e.target.value)} placeholder="Enter pharmacy name" className="w-full"/>
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Owner</label>
-                    <input type="text" value={owner} onChange={(e)=>setOwner(e.target.value)} className="w-full border px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter owner name" />
+                    <Input type="text" value={owner} onChange={(e)=>setOwner(e.target.value)} placeholder="Enter owner name" className="w-full"/>
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Phone Number</label>
-                    <input type="number" value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} className="w-full border px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter phone number" />
+                    <Input type="number" value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} className="w-full" placeholder="Enter phone number" />
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Address</label>
-                    <input type="text" value={address} onChange={(e)=>setAddress(e.target.value)} className="w-full border px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter address..."/>
+                    <Input type="text" value={address} onChange={(e)=>setAddress(e.target.value)} className="w-full" placeholder="Enter address..."/>
                   </div>
 
                   <Button type="submit" onClick={(e)=> {updateForm? updatePharmacy(e): addPharmacy(e)} } variant="success" className="w-[100%]" >{updateForm ? "Update" : "Submit"}</Button>
@@ -171,7 +172,7 @@ function Pharmacies(){
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-black m-2"> {pharmacy.name}</CardTitle>
+                    <CardTitle className="text-black m-2"> </CardTitle>
                     <CardDescription className="text-gray-600"> Owner: {pharmacy.owner}</CardDescription>
                   </div>
                   
