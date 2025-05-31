@@ -3,7 +3,7 @@ import Button from "../components/Button";
 import { use, useState } from "react";
 import { Link } from "react-router-dom";
 import { MapPin , Phone , Edit , Store } from "lucide-react";
-import {Card, CardHeader, CardTitle,CardContent,CardDescription} from '../components/Card';
+import {Card, CardHeader, CardTitle, CardContent ,CardDescription} from '../components/Card';
 function Pharmacies(){
     const [showForm, setShowForm] = useState(false);
     const [updateForm , setUpdateForm] = useState(false);
@@ -167,7 +167,7 @@ function Pharmacies(){
               {/* Pharmacies List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {pharmacies.map((pharmacy) => (
-            <Card key={pharmacy.id} className="bg-white shadow-lg hover:shadow-xl transition-shadow">
+            <Card key={pharmacy.id} className="">
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>

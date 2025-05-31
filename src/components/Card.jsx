@@ -3,7 +3,7 @@ import Button from "./Button";
 export function Card({ className = '', children }) {
   return (
     <div
-      className={` rounded-2xl border cursor-pointer bg-white p-3 shadow-lg hover:shadow-xl transition-all hover:scale-105 flex flex-col items-center justify-evenly text-center ${className}`}>
+      className={`rounded-2xl border cursor-pointer bg-white p-3 shadow-lg hover:shadow-xl transition-all hover:scale-105 flex flex-col items-center justify-evenly text-center ease-in-out duration-300 ${className}`}>
       {children}
     </div>
   );
