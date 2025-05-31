@@ -172,7 +172,7 @@ function Pharmacies(){
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-black m-2"> </CardTitle>
+                    <CardTitle className="text-black m-2"> {pharmacy.name}</CardTitle>
                     <CardDescription className="text-gray-600"> Owner: {pharmacy.owner}</CardDescription>
                   </div>
                   
