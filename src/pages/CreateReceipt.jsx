@@ -1,8 +1,20 @@
+import { useState } from "react";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import Input from "../components/Input";
-import Select from "../components/Select";
+import SelectComp from "../components/SelectComp";
+import Select from "react-select";
 function CreateReceipt(){
+    const inventoryItems = [
+        {value : "0" , label : "brownie"},
+        {value : "1" , label : "mroeww"},
+        {value : "2" , label : "lipss"},
+    ];
+    const [receiptItems , setReceiptItems] = useState([]);
+    function addReceiptItem(){
+        const receiptItem = {};
+        setReceiptItems([...receiptItems , receiptItem]);
+    }
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             {/* header and navbar */}
@@ -30,11 +42,11 @@ function CreateReceipt(){
 
                         {/* select pharmacy and date*/}
                         <div className="flex flex-row w-full items-center">                          
-                            <Select className="w-[50%] m-1" >
+                            <SelectComp className="w-[50%] m-1" >
                                 <option value="" className="" >select pharmacy</option>
                                 <option value="">select pharmacy</option>
                                 <option value="">select pharmacy</option>
-                            </Select>  
+                            </SelectComp>  
                             <Input type="date" className="w-[50%] m-1"/>
                         </div>
 
@@ -49,10 +61,20 @@ function CreateReceipt(){
                                 <div className="text-3xl font-bold mt-4 ">Items</div>
                                 <div className="text-md text-gray-500 mt-1 ">Add products to this receipt</div>
                             </div>
-                            <Button variant="success" >Add Item</Button> 
+                            <Button variant="success" onClick={addReceiptItem} >Add Item</Button> 
                         </div>
                         
                         {/* item section */}
+                        {receiptItems.map((e)=>{
+                            return (
+                                <div className="flex flex-row w-full mt-2 items-center justify-center">
+                                    <Select options={inventoryItems} className="w-[25%] mx-1" />
+                                    <Input className="w-[25%] mx-1" />
+                                    <Input className="w-[25%] mx-1" />
+                                    <Input className="w-[25%] mx-1" />
+                                </div>
+                            );
+                        })}
                         
                     </div>
                     
