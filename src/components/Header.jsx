@@ -8,14 +8,14 @@ function Header(){
                     <Link to="/">
                         <div className="flex items-center">
                             <Package className="h-8 w-8 text-blue-600 mr-3" />
-                            <h1 className="text-xl font-bold text-gray-900">Pro Cosmetics</h1>
+                            <h1 className="text-xs sm:text-sm md:text-md lg:text-lg  font-bold text-blue-600">MSH Cosmetics</h1>
                         </div>
                     </Link>
                     
                     <nav className="flex space-x-4">
-                        <Link to="/inventory" className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md">Inventory</Link>
-                        <Link to="/pharmacies" className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md">Pharmacies</Link>
-                        <Link to="/receipts" className="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md">Receipts</Link>
+                        <Link to="/inventory" className="text-gray-600 hover:text-blue-600 px-1 py-2 rounded-md text-xs sm:text-sm md:text-md lg:text-lg">Inventory</Link>
+                        <Link to="/pharmacies" className="text-gray-600 hover:text-blue-600 px-1 py-2 rounded-md text-xs sm:text-sm md:text-md lg:text-lg">Pharmacies</Link>
+                        <Link to="/receipts" className="text-gray-600 hover:text-blue-600 px-1 py-2 rounded-md text-xs sm:text-sm md:text-md lg:text-lg">Receipts</Link>
                     </nav>
                 </div>
             </div>

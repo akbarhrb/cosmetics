@@ -17,8 +17,8 @@ function Index(){
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* welcome section */}
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4"> Welcome to Your Cosmetics Business Hub</h2>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">Manage your inventory, create professional receipts, and track your sales to pharmacies across your village.</p>
+                    <h2 className="text-lg sm:text-lg md:text-2xl lg:text-4xl font-bold text-gray-900 mb-4"> Welcome to Your Cosmetics Business Hub</h2>
+                    <p className="text-md sm:text-lg md:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto">Manage your inventory, create professional receipts, and track your sales to pharmacies across your village.</p>
                 </div>
                 {/* Actions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
