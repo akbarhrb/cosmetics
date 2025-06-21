@@ -16,7 +16,7 @@ function Receipts(){
     }
     function getReceipts(){
         const receipt = {
-            'number' : 224 , 
+            'id' : 224 , 
             'owner' : "dr. moussa",
             'pharmacy_name' : 'algamal lb',
             'pharmacy_id' : 222,
@@ -40,7 +40,7 @@ function Receipts(){
             <Header />
             {/* select receitps status */}
             <div className="flex flex-row overflow-x-scroll w-full">
-                <Button variant="white" className="w-full m-3 " >draft</Button>
+                <Button variant="white" className="w-full m-3" >draft</Button>
                 <Button variant="white" className="w-full m-3" >pending</Button>
                 <Button variant="white" className="w-full m-3" >receieved</Button>
                 <Button variant="white" className="w-full m-3" >returned</Button>

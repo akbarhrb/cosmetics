@@ -8,7 +8,7 @@ function Receipt({className , receipt}){
             <div className="text-2xl px-3 py-1 flex items-center gap-2"><Store></Store> {receipt.pharmacyName}</div>
             <div className="text-lg px-3 py-1 text-gray-500">owner: {receipt.pharmacyOwner}</div>
             <div className="px-3 py-1 text-gray-500" >Total : <span className="text-green-600" >{receipt.total}$</span></div>
-            <Link to="/" className="w-full" >
+            <Link to={`/receipt/${receipt.id}`} className="w-full" >
                 <Button className="flex gap-2 mt-5 w-full justify-center items-center"><Eye></Eye>View</Button>
             </Link>
         </div>

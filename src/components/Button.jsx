@@ -4,7 +4,7 @@ function Button({ children, onClick, type = "button", className = "", variant = 
   const baseStyles = "px-6 py-2 text-xs sm:text-sm md:text-md lg:text-lg rounded-lg font-medium transition focus:outline-none";
 
   const variants = {
-    white : "bg-white text-black hover:bg-gray-100",
+    white : "bg-white text-black hover:bg-gray-100 hover:shadow-md hover:shadow-blue-200",
     default: "bg-blue-600 text-white hover:bg-blue-700",
     outline: "border border-blue-600 text-blue-600 hover:bg-blue-100",
     danger: "bg-red-600 text-white hover:bg-red-700",
