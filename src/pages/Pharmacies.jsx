@@ -3,9 +3,11 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import {  useState } from "react";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 import { MapPin , Phone , Edit  } from "lucide-react";
 import {Card, CardHeader, CardTitle, CardContent ,CardDescription} from '../components/Card';
 function Pharmacies(){
+    const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [showForm, setShowForm] = useState(false);
     const [updateForm , setUpdateForm] = useState(false);
 
@@ -18,67 +20,34 @@ function Pharmacies(){
     const [owner , setOwner] = useState('');
     const [phoneNumber , setPhoneNumber] = useState('');
     const [address , setAddress] = useState('');
-    const [pharmacies , setPharmacies] = useState([
-    {
-      id: 1,
-      name: 'City Central Pharmacy',
-      owner: 'Dr. Ahmed Hassan',
-      phoneNumber: '96103123467',
-      address: 'Chevrolet Main Street, Alfa Building',
-      status: 'active',
-      totalOrders: 15,
-      lastOrder: '2024-01-20'
-    },
-    {
-      id: 2,
-      name: 'Village Health Pharmacy',
-      owner: 'Mrs. Sarah Johnson',
-      phoneNumber: '96176123467',
-      address: 'Chiyah, Village Center',
-      status: 'active',
-      totalOrders: 12,
-      lastOrder: '2024-01-18'
-    },
-    {
-      id: 3,
-      name: 'Green Cross Pharmacy',
-      owner: 'Mr. Mohamed Ali',
-      phoneNumber: '96103455467',
-      address: 'zalka, KFC North District',
-      status: 'active',
-      totalOrders: 8,
-      lastOrder: '2024-01-15'
-    },
-    {
-      id: 4,
-      name: 'Sunset Pharmacy',
-      owner: 'Dr. Fatima El-Zahra',
-      phoneNumber: '96170123555',
-      address: 'jnoub, West Side',
-      status: 'inactive',
-      totalOrders: 5,
-      lastOrder: '2023-12-10'
-    }
-  ]);
-    
-    let [id , setId] = useState(4);
+    const [pharmacies , setPharmacies] = useState([]);
     
 
-    function addPharmacy(e){
+    async function addPharmacy(e) {
       e.preventDefault();
-      
-      setId(id +1);
       const newPharmacy = {
-        'id': id,
-        'name' : pharmacyName,
-        'owner' : owner,
-        'phoneNumber' : phoneNumber,
-        'address' : address,
-        'status' : 'active',
-        'totalOrders' : 0,
-        'lastOrder' : '00-00-0000'
+        pharmacyName: pharmacyName , 
+        owner : owner ,
+        phoneNumber : phoneNumber ,
+        address : address
       };
-      setPharmacies([...pharmacies,newPharmacy]);
+      try {
+      const response = await axios.post(`${baseUrl}/addPharmacy.php`, newPharmacy);
+
+      if (response.status === 201) {
+        setPharmacies([...pharmacies, newPharmacy]);
+        setName('');
+        setOwner('');
+        setPhoneNumber('');
+        setAddress('');
+      } else {
+        console.error('Unexpected response:', response);
+      }
+    } catch (error) {
+      console.error('Error adding pharmacy:', error);
+    }
+
+      setPharmacies([...pharmacies , newPharmacy]);
       setName('');
       setOwner('');
       setPhoneNumber('');
