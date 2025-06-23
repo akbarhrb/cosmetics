@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import { MapPin , Phone , Edit  } from "lucide-react";
@@ -22,6 +22,19 @@ function Pharmacies(){
     const [address , setAddress] = useState('');
     const [pharmacies , setPharmacies] = useState([]);
     
+    async function getPharmacies(){
+      try{
+        const response = await axios.get(`${baseUrl}/getPharmacies.php`);
+        setPharmacies(response.data);
+        console.log(response.data); 
+      }catch(e){
+        console.error(e);
+      }
+
+    }
+    useEffect(()=>{
+      getPharmacies();
+    }, []);
 
     async function addPharmacy(e) {
       e.preventDefault();
@@ -141,8 +154,8 @@ function Pharmacies(){
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-black m-2"> {pharmacy.name}</CardTitle>
-                    <CardDescription className="text-gray-600"> Owner: {pharmacy.owner}</CardDescription>
+                    <CardTitle className="text-black m-2"> {pharmacy.pharmacy_name}</CardTitle>
+                    <CardDescription className="text-gray-600"> Owner: {pharmacy.pharmacy_owner}</CardDescription>
                   </div>
                   
                 </div>
@@ -151,7 +164,7 @@ function Pharmacies(){
                 <div className="space-y-3 mt-3">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Phone className="h-4 w-4" />
-                    <span>{pharmacy.phoneNumber}</span>
+                    <span>{pharmacy.phone_number}</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <MapPin className="h-4 w-4" />
@@ -161,11 +174,11 @@ function Pharmacies(){
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="text-gray-500">Total Orders:</span>
-                        <div className="font-semibold text-gray-900">{pharmacy.totalOrders}</div>
+                        <div className="font-semibold text-gray-900">{pharmacy.total_orders}</div>
                       </div>
                       <div>
                         <span className="text-gray-500">Last Order:</span>
-                        <div className="font-semibold text-gray-900">{pharmacy.lastOrder}</div>
+                        <div className="font-semibold text-gray-900">{pharmacy.last_order_date}</div>
                       </div>
                     </div>
                   </div>
