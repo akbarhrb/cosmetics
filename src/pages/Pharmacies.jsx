@@ -37,16 +37,26 @@ function Pharmacies(){
     }, []);
 
     async function addPharmacy(e) {
-      e.preventDefault();
-      const newPharmacy = {
-        pharmacyName: pharmacyName , 
-        owner : owner ,
-        phoneNumber : phoneNumber ,
-        address : address
-      };
-      try {
+  e.preventDefault();
+
+  // Trim input values to avoid spaces-only inputs
+  const trimmedName = pharmacyName?.trim();
+  const trimmedOwner = owner?.trim();
+  const trimmedPhone = phoneNumber?.trim();
+  const trimmedAddress = address?.trim();
+
+  if (trimmedName && trimmedOwner && trimmedPhone && trimmedAddress) {
+    const newPharmacy = {
+      pharmacyName: trimmedName,
+      owner: trimmedOwner,
+      phoneNumber: trimmedPhone,
+      address: trimmedAddress
+    };
+
+    try {
       const response = await axios.post(`${baseUrl}/addPharmacy.php`, newPharmacy);
 
+      // Assuming the backend returns 201 on success
       if (response.status === 201) {
         setPharmacies([...pharmacies, newPharmacy]);
         setName('');
@@ -54,18 +64,16 @@ function Pharmacies(){
         setPhoneNumber('');
         setAddress('');
       } else {
-        console.error('Unexpected response:', response);
+        alert(`Failed to add pharmacy: ${response.status}`);
       }
     } catch (error) {
-      console.error('Error adding pharmacy:', error);
+      alert(`Something went wrong. ${error}`);
     }
+  } else {
+    alert("Please fill in all fields.");
+  }
+}
 
-      setPharmacies([...pharmacies , newPharmacy]);
-      setName('');
-      setOwner('');
-      setPhoneNumber('');
-      setAddress('');
-    }
     //edit function
     let [idToUpdate , setIdToUpdate] = useState(null);
     function EditPharmacy(id){
@@ -184,7 +192,7 @@ function Pharmacies(){
                   </div>
                   <div className="pt-3 flex flex-row">
                     <Button variant="outline" className="w-full">
-                      <Link to={`/create-receipt?pharmacy=${pharmacy.id}`} className="flex items-center justify-center w-full">
+                      <Link to={`/create-receipt?pharmacy=${pharmacy.pharmacy_id}`} className="flex items-center justify-center w-full">
                         Create Receipt
                       </Link>
                     </Button>
