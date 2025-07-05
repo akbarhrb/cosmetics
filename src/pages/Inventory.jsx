@@ -4,11 +4,13 @@ import Input from "../components/Input";
 import axios from "axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/Card";
 import Button from "../components/Button";
+import SelectComp from "../components/SelectComp";
 function Inventory(){
 
     const [showForm , setShowForm] = useState(true);
     function toggleButton(){
-        
+        setShowForm(!showForm);
+        console.log(showForm);
     }
     //item attributes
     const [item_name , set_item_name] = useState('');
@@ -24,10 +26,11 @@ function Inventory(){
     const [filteredItems , setFilteredItems] = useState([]);
     const [loading , setLoading] = useState(false);
     const [searchTerm , setSearchTerm] = useState('');
-    function getItems() {
+
+    async function getItems() {
         setLoading(true);
         axios
-        .get("http://makeup-api.herokuapp.com/api/v1/products.json")
+        .get("")
         .then((res) => {
             setItems(res.data);
             setLoading(false); 
@@ -36,7 +39,19 @@ function Inventory(){
             console.error(error);
             setLoading(false); 
         });
-  }
+    }
+    const [categories , setCategories] = useState([]);
+    async function getCategories(){
+        axios
+        .get("")
+        .then((res)=>{
+            setCategories(res.data);
+        })
+        .catch((error) =>{
+            console.error(error);
+        });
+    }
+
 
     useEffect(()=>{
         getItems(); 
@@ -64,7 +79,7 @@ function Inventory(){
                         <h1 className="text-lg sm:text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">Inventory Management</h1>
                         <p className="text-gray-600 mt-2">Track and manage your cosmetic products</p>
                     </div>
-                    <Button className="" variant="success">Add Product</Button>
+                    <Button className="" onClick={toggleButton} variant="success">{showForm? 'Cancel' : 'Add Product'}</Button>
                 </div>
                 {/* show form*/}
               {showForm && (
@@ -72,6 +87,14 @@ function Inventory(){
                   <div>
                     <label className="block mb-1 text-gray-700">Item Name</label>
                     <Input type="text" value={item_name} onChange={(e)=>set_item_name(e.target.value)} placeholder="Enter item name" className="w-full"/>
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Item Category</label>
+                    <SelectComp>
+                        {categories.map((category) => (
+                            <option value={category}>{category}</option>
+                        ))}
+                    </SelectComp>
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Item Color</label>
