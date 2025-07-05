@@ -6,14 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import Button from "../components/Button";
 import SelectComp from "../components/SelectComp";
 function Inventory(){
-
+    const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [showForm , setShowForm] = useState(true);
     function toggleButton(){
         setShowForm(!showForm);
         console.log(showForm);
     }
     //item attributes
-    const [item_name , set_item_name] = useState('');
+    const [item_name , set_item_name] = useState();
+    const [cat_id, set_cat_id] = useState();
     const [item_color , set_item_color] = useState('');
     const [quantity , set_quantity] = useState();
     const [price_unit_ind , set_price_unit_ind] = useState();
@@ -30,7 +31,7 @@ function Inventory(){
     async function getItems() {
         setLoading(true);
         axios
-        .get("")
+        .get(`${baseUrl}/getitems.php`)
         .then((res) => {
             setItems(res.data);
             setLoading(false); 
@@ -41,9 +42,9 @@ function Inventory(){
         });
     }
     const [categories , setCategories] = useState([]);
-    async function getCategories(){
+    async function getcategories(){
         axios
-        .get("")
+        .get(`${baseUrl}/getcategories.php`)
         .then((res)=>{
             setCategories(res.data);
         })
@@ -55,8 +56,52 @@ function Inventory(){
 
     useEffect(()=>{
         getItems(); 
-        
+        getcategories();
     }, []);
+    function addItem(e) {
+    e.preventDefault();
+
+    // Validate required fields
+    if (!cat_id || !item_name || !quantity || !price_unit_ind || !price_dozen || !price_unit_ph || !cost) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+
+    const newItem = {
+        cat_id,
+        item_name,
+        item_color,
+        quantity,
+        price_unit_ind,
+        price_dozen,
+        price_unit_ph,
+        cost,
+        description,
+    };
+
+    axios.post(`${baseUrl}/addItem.php`, newItem)
+        .then(res => {
+        if (res.data.success) {
+            set_item_name('');
+            set_item_color('');
+            set_quantity('');
+            set_price_unit_ind('');
+            set_price_dozen('');
+            set_price_unit_ph('');
+            set_cost('');
+            set_description('');
+            set_cat_id('');
+            setShowForm(false);
+            getItems(); // refresh list
+        } else {
+            alert(res.data.error || "Something went wrong.");
+        }
+        })
+        .catch(error => {
+        alert(error);
+        });
+    }
+
 
     //search function
     function search(){
@@ -90,10 +135,10 @@ function Inventory(){
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Item Category</label>
-                    <SelectComp>
-                        {categories.map((category) => (
-                            <option value={category}>{category}</option>
-                        ))}
+                    <SelectComp value={cat_id} onChange={(e) => set_cat_id(e.target.value)}>
+                    {categories.map((category) => (
+                        <option key={category.cat_id} value={category.cat_id}>{category.cat_name}</option>
+                    ))}
                     </SelectComp>
                   </div>
                   <div>
@@ -125,7 +170,7 @@ function Inventory(){
                     <Input type="text" value={description} onChange={(e)=>set_description(e.target.value)} className="w-full" placeholder="description of the item (optional)"/>
                   </div>
 
-                  <Button type="submit" onClick={(e)=> {} } variant="success" className="w-[100%]" >Add New Item</Button>
+                  <Button type="submit" onClick={(e)=> {addItem(e)} } variant="success" className="w-[100%]" >Add New Item</Button>
                 </form>
               )}
                 {/* inventory items */}

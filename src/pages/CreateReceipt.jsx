@@ -67,7 +67,7 @@ function CreateReceipt(){
                                 <div className="text-3xl font-bold mt-4">Items</div>
                                 <div className="text-md text-gray-500 mt-1 ">Add products to this receipt</div>
                             </div>
-                            <Button variant="success" onClick={addReceiptItem} >Add Item</Button> 
+                            <Button variant="success" onClick={addReceiptItem}>Add Item</Button> 
                         </div>
                         
                         {/* item section */}
