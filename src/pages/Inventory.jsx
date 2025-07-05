@@ -6,6 +6,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import Button from "../components/Button";
 function Inventory(){
 
+    const [showForm , setShowForm] = useState(true);
+    function toggleButton(){
+        
+    }
+    //item attributes
+    const [item_name , set_item_name] = useState('');
+    const [item_color , set_item_color] = useState('');
+    const [quantity , set_quantity] = useState();
+    const [price_unit_ind , set_price_unit_ind] = useState();
+    const [price_dozen , set_price_dozen] = useState();
+    const [price_unit_ph , set_price_unit_ph] = useState();
+    const [cost , set_cost] = useState();
+    const [description , set_description] = useState('');
+
     const [items , setItems] = useState([]);
     const [filteredItems , setFilteredItems] = useState([]);
     const [loading , setLoading] = useState(false);
@@ -52,6 +66,45 @@ function Inventory(){
                     </div>
                     <Button className="" variant="success">Add Product</Button>
                 </div>
+                {/* show form*/}
+              {showForm && (
+                <form className="mt-6 mb-6 space-y-4 p-4 border rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out opacity-100 scale-100 animate-fade-in">
+                  <div>
+                    <label className="block mb-1 text-gray-700">Item Name</label>
+                    <Input type="text" value={item_name} onChange={(e)=>set_item_name(e.target.value)} placeholder="Enter item name" className="w-full"/>
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Item Color</label>
+                    <Input type="text" value={item_color} onChange={(e)=>set_item_color(e.target.value)} placeholder="Enter item color if exit (optional)" className="w-full"/>
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Quantity Available</label>
+                    <Input type="number" value={quantity} onChange={(e)=>set_quantity(e.target.value)} className="w-full" placeholder="set quantity available in our stock" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Price For Indviduals</label>
+                    <Input type="number" value={price_unit_ind} onChange={(e)=>set_price_unit_ind(e.target.value)} className="w-full" placeholder="set price for individuals" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Price In Dozens</label>
+                    <Input type="number" value={price_dozen} onChange={(e)=>set_price_dozen(e.target.value)} className="w-full" placeholder="set price in dozen selling" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Price For Pharmacies</label>
+                    <Input type="number" value={price_unit_ph} onChange={(e)=>set_price_unit_ph(e.target.value)} className="w-full" placeholder="set price for pharmacies" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Cost</label>
+                    <Input type="number" value={cost} onChange={(e)=>set_cost(e.target.value)} className="w-full" placeholder="set the cost of this item" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Description</label>
+                    <Input type="text" value={description} onChange={(e)=>set_description(e.target.value)} className="w-full" placeholder="description of the item (optional)"/>
+                  </div>
+
+                  <Button type="submit" onClick={(e)=> {} } variant="success" className="w-[100%]" >Add New Item</Button>
+                </form>
+              )}
                 {/* inventory items */}
                 {loading && 
                     (
