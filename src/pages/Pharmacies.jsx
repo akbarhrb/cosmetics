@@ -30,7 +30,6 @@ function Pharmacies(){
       }catch(e){
         console.error(e);
       }
-
     }
     useEffect(()=>{
       getPharmacies();

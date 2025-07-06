@@ -1,11 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import Input from "../components/Input";
 import { Save , Printer, Trash} from "lucide-react";
 import SelectComp from "../components/SelectComp";
 import Select from "react-select";
+import axios from "axios";
 function CreateReceipt(){
+    const baseUrl = "http://cosmetics-management.atwebpages.com";
+    const [pharmacies , setPharmacies] = useState([]);
+    async function getPharmacies(){
+      try{
+        const response = await axios.get(`${baseUrl}/getPharmacies.php`);
+        setPharmacies(response.data);
+        console.log(response.data); 
+      }catch(e){
+        console.error(e);
+      }
+    }
+    const [items , setItems] = useState([]);
+    async function getItems() {
+        axios
+        .get(`${baseUrl}/getitems.php`)
+        .then((res) => {
+            setItems(res.data);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
     const inventoryItems = [
         {value : "0" , label : "brownie"},
         {value : "1" , label : "mroeww"},
@@ -21,6 +44,10 @@ function CreateReceipt(){
         };
         setReceiptItems([...receiptItems , receiptItem]);
     }
+    useEffect(()=>{
+        getPharmacies();
+        getItems();
+    } , []);
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             {/* header and navbar */}
@@ -49,9 +76,9 @@ function CreateReceipt(){
                         {/* select pharmacy and date*/}
                         <div className="flex flex-row w-full items-center">                          
                             <SelectComp className="w-[50%] m-1" >
-                                <option value="" className="" >select pharmacy</option>
-                                <option value="">select pharmacy</option>
-                                <option value="">select pharmacy</option>
+                                {pharmacies.map((pharmacy) => (
+                                    <option key={pharmacy.pharmacy_id} value={pharmacy.pharmacy_id}>{pharmacy.pharmacy_name}</option>
+                                ))}
                             </SelectComp>  
                             <Input type="date" className="w-[50%] m-1"/>
                         </div>
