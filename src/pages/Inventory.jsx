@@ -7,7 +7,7 @@ import Button from "../components/Button";
 import SelectComp from "../components/SelectComp";
 function Inventory(){
     const baseUrl = "http://cosmetics-management.atwebpages.com";
-    const [showForm , setShowForm] = useState(true);
+    const [showForm , setShowForm] = useState(false);
     function toggleButton(){
         setShowForm(!showForm);
         console.log(showForm);
@@ -34,6 +34,7 @@ function Inventory(){
         .get(`${baseUrl}/getitems.php`)
         .then((res) => {
             setItems(res.data);
+            setFilteredItems(res.data);
             setLoading(false); 
         })
         .catch((error) => {
@@ -58,7 +59,7 @@ function Inventory(){
         getItems(); 
         getcategories();
     }, []);
-    function addItem(e) {
+    async function addItem(e) {
     e.preventDefault();
 
     // Validate required fields
@@ -79,7 +80,8 @@ function Inventory(){
         description,
     };
 
-    axios.post(`${baseUrl}/addItem.php`, newItem)
+    try{
+       const response = await axios.post(`${baseUrl}/additem.php`, newItem)
         .then(res => {
         if (res.data.success) {
             set_item_name('');
@@ -98,14 +100,18 @@ function Inventory(){
         }
         })
         .catch(error => {
+        console.log(error);
         alert(error);
         });
+    }catch(error){
+        alert(error);
+    }
     }
 
 
     //search function
     function search(){
-        setFilteredItems(items.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase())));  
+        setFilteredItems(items.filter(item => item.item_name.toLowerCase().includes(searchTerm.toLowerCase())));  
         
     }
     useEffect(()=>{
@@ -193,7 +199,7 @@ function Inventory(){
                         <Card className="m-4" >
                             <CardHeader className="justify-start">
                                 
-                                <CardTitle>{item.name}</CardTitle>
+                                <CardTitle>{item.item_name}</CardTitle>
                                 <CardDescription className="m-1" ><p className="text-gray-600" >{item.product_type}</p></CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -204,41 +210,16 @@ function Inventory(){
                                     <div className="my-1">Total Value</div>
                                 </div>
                                 <div className="flex flex-col text-right mr-2">
-                                    <div className="my-1">10</div>
-                                    <div className="text-green-700 my-1" >12$</div>
-                                    <div className="my-1">120$</div>
+                                    <div className="my-1">{item.quantity}</div>
+                                    <div className="text-green-700 my-1" >{item.cost}</div>
+                                    <div className="my-1">{item.cost * item.quantity}</div>
                                 </div>
                                </div>
                             </CardContent>
                         </Card>
                     ) )}
                 </div>
-                <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">      
-                    { filteredItems.length === 0 && items.map( item => (
-                    
-                        <Card className="m-4" >
-                            <CardHeader className="justify-start">
-                                
-                                <CardTitle>{item.name}</CardTitle>
-                                <CardDescription className="m-1" ><p className="text-gray-600" >{item.product_type}</p></CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                               <div className="flex flex-row justify-between w-full">
-                                <div className="flex flex-col text-left ml-2">
-                                    <div className="my-1" >Quantity</div>
-                                    <div className="my-1">Price</div>
-                                    <div className="my-1">Total Value</div>
-                                </div>
-                                <div className="flex flex-col text-right mr-2">
-                                    <div className="my-1">10</div>
-                                    <div className="text-green-700 my-1" >12$</div>
-                                    <div className="my-1">120$</div>
-                                </div>
-                               </div>
-                            </CardContent>
-                        </Card>
-                    ) )}
-                </div>
+                
             </main>
             
             
