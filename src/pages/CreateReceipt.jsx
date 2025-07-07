@@ -29,6 +29,8 @@ function CreateReceipt(){
             console.error(error);
         });
     }
+    const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+    const [date, setDate] = useState(today);
     const inventoryItems = [
         {value : "0" , label : "brownie"},
         {value : "1" , label : "mroeww"},
@@ -80,7 +82,7 @@ function CreateReceipt(){
                                     <option key={pharmacy.pharmacy_id} value={pharmacy.pharmacy_id}>{pharmacy.pharmacy_name}</option>
                                 ))}
                             </SelectComp>  
-                            <Input type="date" className="w-[50%] m-1"/>
+                            <Input type="date" value = {date} onChange={(e) => setDate(e.target.value)} className="w-[50%] m-1"/>
                         </div>
 
                         
