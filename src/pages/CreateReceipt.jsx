@@ -6,6 +6,7 @@ import { Save , Printer, Trash} from "lucide-react";
 import SelectComp from "../components/SelectComp";
 import Select from "react-select";
 import axios from "axios";
+import {v4 as uuid} from 'uuid';
 function CreateReceipt(){
     const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [pharmacies , setPharmacies] = useState([]);
@@ -18,6 +19,10 @@ function CreateReceipt(){
         console.error(e);
       }
     }
+    useEffect(()=>{
+        getPharmacies();
+        getItems();
+    } , []);
     const [items , setItems] = useState([]);
     async function getItems() {
         axios
@@ -31,25 +36,57 @@ function CreateReceipt(){
     }
     const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
     const [date, setDate] = useState(today);
-    const inventoryItems = [
-        {value : "0" , label : "brownie"},
-        {value : "1" , label : "mroeww"},
-        {value : "2" , label : "lipss"},
-    ];
     const [receiptItems , setReceiptItems] = useState([]);
-    function addReceiptItem(){
-        const receiptItem = {
-            'id':'',
-            'quantity' : 1 ,
-            'price' : 12 , 
-            'total' : 12 , 
-        };
-        setReceiptItems([...receiptItems , receiptItem]);
+    const options = items.map((item) => ({
+    value: item.item_id,
+    label: item.item_name,
+    }));
+    const [item , setItem] = useState();
+    const [quantity , setQuantity] = useState(1);
+    const [price , setPrice] = useState(0);
+    const [total , setTotal] = useState(0);
+    const [price_unit_ph , set_price_unit_ph] = useState();
+    const [price_dozen , set_price_dozen] = useState();
+    const [price_unit_ind , set_price_unit_ind] = useState();
+    function getItemPrice(e){
+        setItem(e.value);
+        const selectedItem = items.find((item)=> item.item_id === e.value);
+        set_price_unit_ph(selectedItem.price_unit_ph);
+        set_price_dozen(selectedItem.price_dozen);
+        set_price_unit_ind(selectedItem.price_unit_ind);
+        
+
     }
-    useEffect(()=>{
-        getPharmacies();
-        getItems();
-    } , []);
+    function addReceiptItem(){
+        const newReceiptItem = {
+            receipt_item_id : uuid(),
+            item_id: null,
+            quantity: 1,
+            price_unit_ph: 0,
+            price_dozen: 0,
+            price_unit_ind: 0,
+            price: 0,
+            total: 0
+        };
+        setReceiptItems([...receiptItems , newReceiptItem]);
+    }
+    function updateItem(id, field, value) {
+        const updated = receiptItems.map((item) => {
+            if (item.receipt_item_id === id) {
+                item.price_unit_ph = price_unit_ph;
+                item.price_dozen = price_dozen;
+                item.price_unit_ind = price_dozen;
+                const updatedItem = { ...item, [field]: value };
+                if (field === "price" || field === "quantity") {
+                    updatedItem.total = updatedItem.quantity * updatedItem.price;
+                    }
+                return updatedItem;
+                }   
+            return item;
+        });
+        setReceiptItems(updated);
+    }
+    
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             {/* header and navbar */}
@@ -103,10 +140,14 @@ function CreateReceipt(){
                         {receiptItems.map((receiptItem)=>{
                             return (
                                 <div className="flex flex-row w-full mt-2 items-center justify-center flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap">
-                                    <Select options={inventoryItems} className="w-[95%] m-1 min-w-72" />
-                                    <Input type="number" placeholder="quantity" className="w-[25%] m-1" />
-                                    <Input type="number" value={receiptItem.price} disabled="true" className="w-[25%] m-1" />
-                                    <Input type="number" disabled="true" value={receiptItem.price * 2}  className="w-[25%] m-1" />
+                                    <Select options={options} onChange={(e)=>getItemPrice(e)} className="w-[95%] m-1 min-w-72" />
+                                    <Input type="number" value={receiptItem.quantity} onChange={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , e.target.value))} placeholder="quantity" className="w-[25%] m-1" />
+                                    <SelectComp value={receiptItem.price} onChange={(e)=>updateItem(receiptItem.receipt_item_id , "price" , e.target.value)}  className="w-[25%] m-1">
+                                        <option value={receiptItem.price_unit_ph} >pharmacies {receiptItem.price_unit_ph}$</option>
+                                        <option value={receiptItem.price_dozen} >dozens {receiptItem.price_dozen}$</option>
+                                        <option value={receiptItem.price_unit_ind} >indviduals {receiptItem.price_unit_ind}$</option>
+                                    </SelectComp>
+                                    <Input type="number" disabled="true" value={receiptItem.total} className="w-[25%] m-1" />
                                     <Button variant="danger" className="m-1 w-[95%] sm:w-[95%] lg:w-fit flex items-center justify-center" ><Trash></Trash></Button>
                                     
                                 </div>
