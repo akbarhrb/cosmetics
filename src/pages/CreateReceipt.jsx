@@ -75,7 +75,7 @@ function CreateReceipt(){
             if (item.receipt_item_id === id) {
                 item.price_unit_ph = price_unit_ph;
                 item.price_dozen = price_dozen;
-                item.price_unit_ind = price_dozen;
+                item.price_unit_ind = price_unit_ind;
                 const updatedItem = { ...item, [field]: value };
                 if (field === "price" || field === "quantity") {
                     updatedItem.total = updatedItem.quantity * updatedItem.price;
@@ -85,6 +85,19 @@ function CreateReceipt(){
             return item;
         });
         setReceiptItems(updated);
+        calcReceiptTotal(updated);
+    }
+    const [receipt_total , set_receipt_total] = useState(0);
+    function calcReceiptTotal(items){
+        const total = items.reduce((sum , item) => sum + item.total , 0);
+        set_receipt_total(total);
+    }
+    function deleteReceiptItem(itemToDelete) {
+        const updatedItems = receiptItems.filter(
+            (item) => item.receipt_item_id !== itemToDelete.receipt_item_id
+        );
+        setReceiptItems(updatedItems);
+        calcReceiptTotal(updatedItems);
     }
     
     return (
@@ -145,10 +158,10 @@ function CreateReceipt(){
                                     <SelectComp value={receiptItem.price} onChange={(e)=>updateItem(receiptItem.receipt_item_id , "price" , e.target.value)}  className="w-[25%] m-1">
                                         <option value={receiptItem.price_unit_ph} >pharmacies {receiptItem.price_unit_ph}$</option>
                                         <option value={receiptItem.price_dozen} >dozens {receiptItem.price_dozen}$</option>
-                                        <option value={receiptItem.price_unit_ind} >indviduals {receiptItem.price_unit_ind}$</option>
+                                        <option value={receiptItem.price_unit_ind}>indviduals {receiptItem.price_unit_ind}$</option>
                                     </SelectComp>
-                                    <Input type="number" disabled="true" value={receiptItem.total} className="w-[25%] m-1" />
-                                    <Button variant="danger" className="m-1 w-[95%] sm:w-[95%] lg:w-fit flex items-center justify-center" ><Trash></Trash></Button>
+                                    <Input type="text" disabled="true" value={`total: ${receiptItem.total}$`} className="w-[25%] m-1" />
+                                    <Button variant="danger" onClick={()=>deleteReceiptItem(receiptItem)} className="m-1 w-[95%] sm:w-[95%] lg:w-fit flex items-center justify-center" ><Trash></Trash></Button>
                                     
                                 </div>
                             );
@@ -159,7 +172,7 @@ function CreateReceipt(){
                     <div className="w-[95%] lg:w-[70%] md:w-[95%] sm:w-[95%]  flex flex-col items-center justify-between bg-white p-3 my-3 rounded-lg cursor-pointer">
                         <div className="flex flex-row w-full ">
                             <div className="text-3xl font-bold my-3 mx-1" >Total: </div>
-                            <div className="text-3xl my-3" >12$</div>
+                            <div className="text-3xl my-3" >{receipt_total}$</div>
                         </div>
                         <div className="flex flex-row w-full justify-between items-start">
                             <Button variant="success" className="m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
