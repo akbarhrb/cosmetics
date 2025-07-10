@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -10,6 +10,7 @@ import {v4 as uuid} from 'uuid';
 function CreateReceipt(){
     const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [pharmacies , setPharmacies] = useState([]);
+    const [pharmacy_id , set_pharmacy_id] = useState();
     async function getPharmacies(){
       try{
         const response = await axios.get(`${baseUrl}/getPharmacies.php`);
@@ -60,7 +61,7 @@ function CreateReceipt(){
     function addReceiptItem(){
         const newReceiptItem = {
             receipt_item_id : uuid(),
-            item_id: null,
+            item_id: item,
             quantity: 1,
             price_unit_ph: 0,
             price_dozen: 0,
@@ -99,6 +100,32 @@ function CreateReceipt(){
         setReceiptItems(updatedItems);
         calcReceiptTotal(updatedItems);
     }
+    const [receipt_id , set_receipt_id] = useState();
+    async function createReceipt(){
+        console.log("Adding");
+        try{
+            const receipt = {
+                'pharmacy_id': pharmacy_id,
+                'date': date
+            }
+            const response = await axios.post(`${baseUrl}/createReceipt.php` , receipt);
+            console.log(response);
+            console.log(response.data);
+            if(response.data['success']){
+                set_receipt_id(response.data['receipt_id']);
+            }else{
+                alert(response.data['message']);
+            }
+            const rcpItems = {
+                'receipt_id' : receipt_id,
+                'receipt_items' : receiptItems
+            }
+            const res = await axios.post(`${baseUrl}/addReceiptItems.php` , rcpItems);
+            setReceiptItems([]);
+        }catch(e){
+            alert(e);
+        }
+    }
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -127,7 +154,7 @@ function CreateReceipt(){
 
                         {/* select pharmacy and date*/}
                         <div className="flex flex-row w-full items-center">                          
-                            <SelectComp className="w-[50%] m-1" >
+                            <SelectComp className="w-[50%] m-1" onChange={(e)=>set_pharmacy_id(e.target.value)} >
                                 {pharmacies.map((pharmacy) => (
                                     <option key={pharmacy.pharmacy_id} value={pharmacy.pharmacy_id}>{pharmacy.pharmacy_name}</option>
                                 ))}
@@ -152,10 +179,10 @@ function CreateReceipt(){
                         {/* item section */}
                         {receiptItems.map((receiptItem)=>{
                             return (
-                                <div className="flex flex-row w-full mt-2 items-center justify-center flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap">
-                                    <Select options={options} onChange={(e)=>getItemPrice(e)} className="w-[95%] m-1 min-w-72" />
+                                <div className="flex flex-row w-full rounded-lg border-4 p-1 mt-2 items-center justify-center flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap">
+                                    <Select options={options} onChange={(e)=>getItemPrice(e)} className="w-[95%] m-1 mx-2 min-w-72" />
                                     <Input type="number" value={receiptItem.quantity} onChange={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , e.target.value))} placeholder="quantity" className="w-[25%] m-1" />
-                                    <SelectComp value={receiptItem.price} onChange={(e)=>updateItem(receiptItem.receipt_item_id , "price" , e.target.value)}  className="w-[25%] m-1">
+                                    <SelectComp value={receiptItem.price} onChange={(e)=>updateItem(receiptItem.receipt_item_id , "price" , e.target.value)}  className="w-[25%] m-1 mx-2">
                                         <option value={receiptItem.price_unit_ph} >pharmacies {receiptItem.price_unit_ph}$</option>
                                         <option value={receiptItem.price_dozen} >dozens {receiptItem.price_dozen}$</option>
                                         <option value={receiptItem.price_unit_ind}>indviduals {receiptItem.price_unit_ind}$</option>
@@ -175,7 +202,7 @@ function CreateReceipt(){
                             <div className="text-3xl my-3" >{receipt_total}$</div>
                         </div>
                         <div className="flex flex-row w-full justify-between items-start">
-                            <Button variant="success" className="m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
+                            <Button onClick={()=>createReceipt()} variant="success" className="m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
                             <Button variant="outline" className="m-1 flex gap-1"><Save></Save> save as draft</Button>
                         </div>
                     </div>
