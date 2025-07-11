@@ -11,14 +11,14 @@ function ReceiptDetails(){
             'createdAt' : "12-06-2025",
             'items' : [
                 {
-                    'name':"test",
+                    'name':"sapon",
                     'quantity' : 2, 
-                    'price' : 20
+                    'price' : 40
                 },
                  {
-                    'name':"test",
-                    'quantity' : 2, 
-                    'price' : 20
+                    'name':"ktiir ghale",
+                    'quantity' : 4, 
+                    'price' : 50
                 },
                  {
                     'name':"test",
@@ -47,7 +47,7 @@ function ReceiptDetails(){
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             <Header />
-            <div ref={printRef} className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6 print:shadow-none print:p-0 print:rounded-none">
+            <div ref={printRef} className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg mt-4 p-6 print:shadow-none print:p-0 print:rounded-none">
         <div className="text-center mb-6 border-b pb-4">
           <h1 className="text-2xl font-bold text-blue-700">Receipt</h1>
           <p className="text-sm text-gray-600">Receipt No: #{receipt.id}</p>

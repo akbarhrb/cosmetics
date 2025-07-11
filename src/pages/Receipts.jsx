@@ -2,16 +2,30 @@ import axios from "axios";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import Receipt from "../components/Receipt";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 function Receipts(){
+    const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [receipts , setReceipts] = useState([]);
+    const [status , setStatus] = useState('pending');
     async function getReceipt(){
         try{
-            const response = axios.get();
+            const data = {
+                'status' : status
+            }
+            const response = await axios.post(`${baseUrl}/getReceipts.php` , data );
+            if(response.data['success']){
+                setReceipts(response.data['data']);
+                console.log(response.data['data']);
+            }else{
+                console.log(`error:  ${response.data['message']}` );
+            }
         }catch(e){
             alert(e);
         }
     }
+    useEffect(()=>{
+        getReceipt();
+    },[]);
     const receiptRef = useRef();
     const freceipt = {
             'id' : 224 , 
@@ -55,9 +69,10 @@ function Receipts(){
             </div>
 
             {/* receipts */}
-            <div className="grid grid-cols-4">
-                <Receipt receipt={freceipt} />
-        
+            <div className="grid lg:grid-cols-7 sm:grid-cols-2 grid-cols-1">
+                {receipts.map((receipt)=>(
+                    <Receipt receipt={receipt} />
+                ))}
             </div>   
             
         </div>
