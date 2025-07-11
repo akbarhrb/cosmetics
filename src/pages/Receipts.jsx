@@ -1,9 +1,17 @@
+import axios from "axios";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import Receipt from "../components/Receipt";
 import { useRef, useState } from "react";
 function Receipts(){
     const [receipts , setReceipts] = useState([]);
+    async function getReceipt(){
+        try{
+            const response = axios.get();
+        }catch(e){
+            alert(e);
+        }
+    }
     const receiptRef = useRef();
     const freceipt = {
             'id' : 224 , 

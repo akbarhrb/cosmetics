@@ -7,10 +7,12 @@ import SelectComp from "../components/SelectComp";
 import Select from "react-select";
 import axios from "axios";
 import {v4 as uuid} from 'uuid';
+import { useNavigate } from "react-router-dom";
 function CreateReceipt(){
     const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [pharmacies , setPharmacies] = useState([]);
     const [pharmacy_id , set_pharmacy_id] = useState();
+    const navigate = useNavigate();
     async function getPharmacies(){
       try{
         const response = await axios.get(`${baseUrl}/getPharmacies.php`);
@@ -108,6 +110,18 @@ function CreateReceipt(){
                 'pharmacy_id': pharmacy_id,
                 'date': date
             }
+            if(!pharmacy_id){
+                alert('choose pharmacy');
+                return;
+            }
+            if(receiptItems.length < 1){
+                alert('cant create empty receipt');
+                return;
+            }
+            if(receipt_total<=0){
+                alert('cant create empty receipt');
+                return;
+            }
             const response = await axios.post(`${baseUrl}/createReceipt.php` , receipt);
             console.log(response);
             console.log(response.data);
@@ -122,6 +136,8 @@ function CreateReceipt(){
             }
             const res = await axios.post(`${baseUrl}/addReceiptItems.php` , rcpItems);
             setReceiptItems([]);
+            setTotal(0);
+            navigate('/receipts');
         }catch(e){
             alert(e);
         }
@@ -155,6 +171,7 @@ function CreateReceipt(){
                         {/* select pharmacy and date*/}
                         <div className="flex flex-row w-full items-center">                          
                             <SelectComp className="w-[50%] m-1" onChange={(e)=>set_pharmacy_id(e.target.value)} >
+                                <option value={null}>Select Pharmacy</option>
                                 {pharmacies.map((pharmacy) => (
                                     <option key={pharmacy.pharmacy_id} value={pharmacy.pharmacy_id}>{pharmacy.pharmacy_name}</option>
                                 ))}
