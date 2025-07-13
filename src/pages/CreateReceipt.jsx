@@ -49,6 +49,7 @@ function CreateReceipt(){
     value: item.item_id,
     label: item.item_name,
     }));
+    
 
     function addReceiptItem(){
         const newReceiptItem = {
@@ -77,6 +78,21 @@ function CreateReceipt(){
         setReceiptItems(updated);
         calcReceiptTotal(updated);
     }
+    function updateMultipleFields(id, updates) {
+    const updated = receiptItems.map((item) => {
+        if (item.receipt_item_id === id) {
+            const updatedItem = { ...item, ...updates };
+            if ('price' in updates || 'quantity' in updates) {
+                updatedItem.total = updatedItem.quantity * updatedItem.price;
+            }
+            return updatedItem;
+        }
+        return item;
+    });
+    setReceiptItems(updated);
+    calcReceiptTotal(updated);
+}
+
     const [receipt_total , set_receipt_total] = useState(0);
     function calcReceiptTotal(items){
         const total = items.reduce((sum , item) => sum + item.total , 0);
@@ -120,8 +136,8 @@ function CreateReceipt(){
             const res = await axios.post(`${baseUrl}/addReceiptItems.php` , rcpItems);
             console.log(res.data);
             console.log(receiptItems);
-            // setReceiptItems([]);
-            // navigate('/receipts');
+            setReceiptItems([]);
+            navigate('/receipts');
         }catch(e){
             alert(e);
         }
@@ -180,25 +196,24 @@ function CreateReceipt(){
                         {/* item section */}
                         {receiptItems.map((receiptItem)=>{
                             return (
-                                <div className="flex flex-row w-full rounded-lg border-4 p-1 mt-2 items-center justify-center flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap">
+                                <div key={receiptItem.receipt_item_id} className="flex flex-row w-full rounded-lg border-4 p-1 mt-2 items-center justify-center flex-wrap lg:flex-nowrap sm:flex-wrap md:flex-wrap">
                                     <Select
                                             options={options}
                                             value={options.find(opt => opt.value === receiptItem.item_id)}
                                             onChange={(selected) => {
-                                                console.log(items);
-                                                const selectedItem = items.find((item) => item.item_id === selected.value);
-                                                console.log(selectedItem);
-                                                updateItem(receiptItem.receipt_item_id, 'item_id', selected.item_id);
-                                                // update price options too:
-                                                // updateItem(receiptItem.receipt_item_id, 'price_unit_ph', selectedItem.price_unit_ph);
-                                                // updateItem(receiptItem.receipt_item_id, 'price_dozen', selectedItem.price_dozen);
-                                                // updateItem(receiptItem.receipt_item_id, 'price_unit_ind', selectedItem.price_unit_ind);
-                                                console.log(receiptItem);
+                                                const selectedItem = items.find(item => item.item_id === selected.value);
+                                                updateMultipleFields(receiptItem.receipt_item_id, {
+                                                    item_id: selectedItem.item_id,
+                                                    price_unit_ph: selectedItem.price_unit_ph,
+                                                    price_dozen: selectedItem.price_dozen,
+                                                    price_unit_ind: selectedItem.price_unit_ind
+                                                });
                                             }}
                                             className="w-[95%] m-1 mx-2 min-w-72"
                                         />
                                     <Input type="number" value={receiptItem.quantity} onChange={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , e.target.value))} placeholder="quantity" className="w-[25%] m-1" />
                                     <SelectComp value={receiptItem.price} onChange={(e)=>updateItem(receiptItem.receipt_item_id , "price" , e.target.value)}  className="w-[25%] m-1 mx-2">
+                                        <option value={0}>select price</option>
                                         <option value={receiptItem.price_unit_ph} >pharmacies {receiptItem.price_unit_ph}$</option>
                                         <option value={receiptItem.price_dozen} >dozens {receiptItem.price_dozen}$</option>
                                         <option value={receiptItem.price_unit_ind}>indviduals {receiptItem.price_unit_ind}$</option>
