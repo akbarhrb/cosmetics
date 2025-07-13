@@ -4,6 +4,7 @@ import Input from "../components/Input";
 import {  useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { MapPin , Phone , Edit  } from "lucide-react";
 import {Card, CardHeader, CardTitle, CardContent ,CardDescription} from '../components/Card';
 function Pharmacies(){
@@ -185,7 +186,7 @@ function Pharmacies(){
                       </div>
                       <div>
                         <span className="text-gray-500">Last Order:</span>
-                        <div className="font-semibold text-gray-900">{pharmacy.last_order_date}</div>
+                        <div className="font-semibold text-gray-900">{dayjs(pharmacy.last_order_date).format('DD-MM-YYYY')}</div>
                       </div>
                     </div>
                   </div>
