@@ -53,12 +53,42 @@ function Inventory(){
             console.error(error);
         });
     }
+    const [requiredItems, setRequiredItems] = useState([]);
 
+    async function getRequiredItems() {
+        try {
+            const response = await axios.get(`${baseUrl}/getRequiredItems.php`);
+            if (response.data['success']) {
+                let fetchedItems = response.data['data'];
 
+                // Filter and update quantities
+                const updatedItems = fetchedItems.map(reqItem => {
+                    const matchingItem = items.find(filItem => filItem.item_id === reqItem.item_id);
+                    if (matchingItem) {
+                        const updatedQuantity = Math.max(0, reqItem.total_required_quantity - matchingItem.quantity);
+                        return { ...reqItem, total_required_quantity: updatedQuantity };
+                    }
+                    return reqItem;
+                }).filter(item => item.total_required_quantity > 0);
+                setRequiredItems(updatedItems);
+
+            } else {
+                alert('Error: ' + response.data.message);
+            }
+        } catch (e) {
+            alert('Error: ' + e.message);
+        }
+    }
     useEffect(()=>{
         getItems(); 
         getcategories();
+        
     }, []);
+    useEffect(() => {
+        if (items.length > 0) {
+            getRequiredItems();
+        }
+    }, [items]);
     async function addItem(e) {
     e.preventDefault();
 
@@ -178,7 +208,18 @@ function Inventory(){
 
                   <Button type="submit" onClick={(e)=> {addItem(e)} } variant="success" className="w-[100%]" >Add New Item</Button>
                 </form>
-              )}
+            )}
+                {/* required items */}
+                <div className="bg-white p-4 rounded-md shadow-md mx-4 mb-6">
+                    <h2 className="lg:text-2xl sm:text-lg font-bold text-red-500 mb-3">Required Items</h2>
+                    {requiredItems.map((reqItem) => (
+                        <div key={reqItem.item_id} className="text-red-600 border-b py-1">
+                            {reqItem.item_name} : {reqItem.total_required_quantity} unit needed
+                        </div>
+                    ))}
+                </div>
+
+              
                 {/* inventory items */}
                 {loading && 
                     (
