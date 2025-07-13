@@ -7,11 +7,16 @@ import SelectComp from "../components/SelectComp";
 import Select from "react-select";
 import axios from "axios";
 import {v4 as uuid} from 'uuid';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 function CreateReceipt(){
     const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [pharmacies , setPharmacies] = useState([]);
-    const [pharmacy_id , set_pharmacy_id] = useState();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const preselectedPharmacyId = queryParams.get("pharmacy_id");
+    const [pharmacy_id , set_pharmacy_id] = useState(preselectedPharmacyId);
+   
+
     const navigate = useNavigate();
     async function getPharmacies(){
       try{
@@ -149,7 +154,7 @@ function CreateReceipt(){
 
                         {/* select pharmacy and date*/}
                         <div className="flex flex-row w-full items-center">                          
-                            <SelectComp className="w-[50%] m-1" onChange={(e)=>set_pharmacy_id(e.target.value)} >
+                            <SelectComp className="w-[50%] m-1" value={pharmacy_id} onChange={(e)=>set_pharmacy_id(e.target.value)} >
                                 <option value={null}>Select Pharmacy</option>
                                 {pharmacies.map((pharmacy) => (
                                     <option key={pharmacy.pharmacy_id} value={pharmacy.pharmacy_id}>{pharmacy.pharmacy_name}</option>

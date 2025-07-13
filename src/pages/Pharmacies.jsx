@@ -191,7 +191,7 @@ function Pharmacies(){
                   </div>
                   <div className="pt-3 flex flex-row">
                     <Button variant="outline" className="w-full">
-                      <Link to={`/create-receipt?pharmacy=${pharmacy.pharmacy_id}`} className="flex items-center justify-center w-full">
+                      <Link to={`/create-receipt?pharmacy_id=${pharmacy.pharmacy_id}`} className="flex items-center justify-center w-full">
                         Create Receipt
                       </Link>
                     </Button>
