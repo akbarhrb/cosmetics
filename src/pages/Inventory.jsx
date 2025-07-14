@@ -15,6 +15,7 @@ function Inventory(){
     }
     const [process , setProcess] = useState('Add New Item');
     //item attributes
+    const [item_id , set_item_id] = useState();
     const [item_name , set_item_name] = useState();
     const [cat_id, set_cat_id] = useState();
     const [item_color , set_item_color] = useState('');
@@ -150,10 +151,11 @@ function Inventory(){
     useEffect(()=>{
         search();
     }, [searchTerm])
-    async function updateItem(selectedItem){
+    function EditItem(selectedItem){
         const item = items.find((item)=> item.item_id == selectedItem.item_id);
         setShowForm(true);
         setProcess("Update");
+        set_item_id(item.item_id);
         set_item_name(item.item_name);
         set_cat_id(item.cat_id);
         set_item_color(item.item_color);
@@ -163,31 +165,57 @@ function Inventory(){
         set_price_unit_ph(item.price_unit_ph);
         set_cost(item.cost);
         set_description(item.description);
-
+    }
+    async function updateItem(){
         const data = {
-            'item_id' : item.item_id,
-            
+            'item_id' : item_id,
+            'item_name' : item_name,
+            'cat_id' : cat_id,
+            'item_color' : item_color,
+            'quantity' : quantity,
+            'price_unit_ind' : price_unit_ind,
+            'price_dozen' : price_dozen,
+            'price_unit_ph' : price_unit_ph,
+            'cost' : cost,
+            'description' : description
         }
         try{
             const response = await axios.post(`${baseUrl}/updateItem.php` , data);
-
+            if(response.data['success']){
+                set_item_name();
+                set_cat_id();
+                set_item_color('');
+                set_quantity();
+                set_price_unit_ind();
+                set_price_dozen();
+                set_price_unit_ph();
+                set_cost();
+                set_description('');
+                setShowForm(false);
+                setProcess('Add New Item');
+            }else{
+                alert(response.data);
+            }
         }catch(e){
             alert(e);
-        }finally{
-            set_item_name(item.item_name);
-            set_cat_id();
-            set_item_color('');
-            set_quantity();
-            set_price_unit_ind();
-            set_price_dozen();
-            set_price_unit_ph();
-            set_cost();
-            set_description('');
-            setShowForm(false);
-            setProcess('Add New Item');
         }
-
     }
+    async function softDeleteItem(id) {
+    if (!window.confirm("Are you sure you want to delete this item?")) return;
+
+    try {
+        const response = await axios.post(`${baseUrl}/deleteItem.php`, { item_id: id });
+        if (response.data.success) {
+        alert("Item deleted.");
+        getItems(); 
+        } else {
+        alert("Failed to delete: " + response.data.message);
+        }
+    } catch (e) {
+        alert("Error deleting item: " + e.message);
+    }
+    }
+
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -247,7 +275,10 @@ function Inventory(){
                     <Input type="text" value={description} onChange={(e)=>set_description(e.target.value)} className="w-full" placeholder="description of the item (optional)"/>
                   </div>
 
-                  <Button type="submit" onClick={(e)=> {addItem(e)} } variant="success" className="w-[100%]" >{process}</Button>
+                  <Button type="submit" onClick={ process == "Update" ? (e)=>updateItem(e) :(e)=> addItem(e) } variant="success" className="w-[100%]" >{process}</Button>
+                  {
+                    process == "Update" ? <Button variant="danger" className="w-full my-2" onClick={()=>softDeleteItem(item_id)} >Soft Delete</Button> : ''
+                  }
                 </form>
             )}
                 {/* required items */}
@@ -281,7 +312,7 @@ function Inventory(){
                         <Card className="m-4" >
                             <CardHeader className="justify-start">
                                 
-                                <CardTitle className="flex items-center" >{item.item_name} <Edit className="mt-2 text-green-700" onClick={()=>updateItem(item)} ></Edit></CardTitle> 
+                                <CardTitle className="flex items-center" >{item.item_name} <Edit className="mt-2 text-green-700" onClick={()=>EditItem(item)} ></Edit></CardTitle> 
                                 <CardDescription className="m-1" ><p className="text-gray-600" >{item.cat_name}</p></CardDescription>
                             </CardHeader>
                             <CardContent>
