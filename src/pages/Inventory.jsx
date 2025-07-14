@@ -5,6 +5,7 @@ import axios from "axios";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/Card";
 import Button from "../components/Button";
 import SelectComp from "../components/SelectComp";
+import { Edit } from "lucide-react";
 function Inventory(){
     const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [showForm , setShowForm] = useState(false);
@@ -12,6 +13,7 @@ function Inventory(){
         setShowForm(!showForm);
         console.log(showForm);
     }
+    const [process , setProcess] = useState('Add New Item');
     //item attributes
     const [item_name , set_item_name] = useState();
     const [cat_id, set_cat_id] = useState();
@@ -35,6 +37,7 @@ function Inventory(){
         .then((res) => {
             setItems(res.data);
             setFilteredItems(res.data);
+            console.log(res.data);
             setLoading(false); 
         })
         .catch((error) => {
@@ -147,6 +150,44 @@ function Inventory(){
     useEffect(()=>{
         search();
     }, [searchTerm])
+    async function updateItem(selectedItem){
+        const item = items.find((item)=> item.item_id == selectedItem.item_id);
+        setShowForm(true);
+        setProcess("Update");
+        set_item_name(item.item_name);
+        set_cat_id(item.cat_id);
+        set_item_color(item.item_color);
+        set_quantity(item.quantity);
+        set_price_unit_ind(item.price_unit_ind);
+        set_price_dozen(item.price_dozen);
+        set_price_unit_ph(item.price_unit_ph);
+        set_cost(item.cost);
+        set_description(item.description);
+
+        const data = {
+            'item_id' : item.item_id,
+            
+        }
+        try{
+            const response = await axios.post(`${baseUrl}/updateItem.php` , data);
+
+        }catch(e){
+            alert(e);
+        }finally{
+            set_item_name(item.item_name);
+            set_cat_id();
+            set_item_color('');
+            set_quantity();
+            set_price_unit_ind();
+            set_price_dozen();
+            set_price_unit_ph();
+            set_cost();
+            set_description('');
+            setShowForm(false);
+            setProcess('Add New Item');
+        }
+
+    }
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -206,7 +247,7 @@ function Inventory(){
                     <Input type="text" value={description} onChange={(e)=>set_description(e.target.value)} className="w-full" placeholder="description of the item (optional)"/>
                   </div>
 
-                  <Button type="submit" onClick={(e)=> {addItem(e)} } variant="success" className="w-[100%]" >Add New Item</Button>
+                  <Button type="submit" onClick={(e)=> {addItem(e)} } variant="success" className="w-[100%]" >{process}</Button>
                 </form>
             )}
                 {/* required items */}
@@ -240,22 +281,22 @@ function Inventory(){
                         <Card className="m-4" >
                             <CardHeader className="justify-start">
                                 
-                                <CardTitle>{item.item_name}</CardTitle>
-                                <CardDescription className="m-1" ><p className="text-gray-600" >{item.product_type}</p></CardDescription>
+                                <CardTitle className="flex items-center" >{item.item_name} <Edit className="mt-2 text-green-700" onClick={()=>updateItem(item)} ></Edit></CardTitle> 
+                                <CardDescription className="m-1" ><p className="text-gray-600" >{item.cat_name}</p></CardDescription>
                             </CardHeader>
                             <CardContent>
                                <div className="flex flex-row justify-between w-full">
-                                <div className="flex flex-col text-left ml-2">
-                                    <div className="my-1" >Quantity</div>
-                                    <div className="my-1">Price</div>
-                                    <div className="my-1">Total Value</div>
+                                    <div className="flex flex-col text-left ml-2">
+                                        <div className="my-1" >Quantity</div>
+                                        <div className="my-1">Cost</div>
+                                        <div className="my-1">Total Value</div>
+                                    </div>
+                                    <div className="flex flex-col text-right mr-2">
+                                        <div className="my-1">{item.quantity} unit</div>
+                                        <div className="text-green-700 my-1" >{item.cost} $</div>
+                                        <div className="my-1">{item.cost * item.quantity} $</div>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col text-right mr-2">
-                                    <div className="my-1">{item.quantity}</div>
-                                    <div className="text-green-700 my-1" >{item.cost}</div>
-                                    <div className="my-1">{item.cost * item.quantity}</div>
-                                </div>
-                               </div>
                             </CardContent>
                         </Card>
                     ) )}
