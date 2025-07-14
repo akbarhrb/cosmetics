@@ -201,12 +201,22 @@ function Inventory(){
         }
     }
     async function softDeleteItem(id) {
-    if (!window.confirm("Are you sure you want to delete this item?")) return;
-
+    if (!window.confirm("Are you sure you want to delete this item? note that before deleting the item delete all receipts that includes this item")) return;
     try {
         const response = await axios.post(`${baseUrl}/deleteItem.php`, { item_id: id });
         if (response.data.success) {
+            set_item_name();
+                set_cat_id();
+                set_item_color('');
+                set_quantity();
+                set_price_unit_ind();
+                set_price_dozen();
+                set_price_unit_ph();
+                set_cost();
+                set_description('');
         alert("Item deleted.");
+        setProcess("Add New Item");
+        setShowForm(false);
         getItems(); 
         } else {
         alert("Failed to delete: " + response.data.message);
