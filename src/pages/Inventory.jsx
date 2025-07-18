@@ -19,7 +19,7 @@ function Inventory(){
     const [item_name , set_item_name] = useState();
     const [cat_id, set_cat_id] = useState();
     const [item_color , set_item_color] = useState('');
-    const [quantity , set_quantity] = useState();
+    const [quantity , set_quantity] = useState(0);
     const [price_unit_ind , set_price_unit_ind] = useState();
     const [price_dozen , set_price_dozen] = useState();
     const [price_unit_ph , set_price_unit_ph] = useState();
@@ -97,7 +97,7 @@ function Inventory(){
     e.preventDefault();
 
     // Validate required fields
-    if (!cat_id || !item_name || !quantity || !price_unit_ind || !price_dozen || !price_unit_ph || !cost) {
+    if (!cat_id || !item_name || !price_unit_ind || !price_dozen || !price_unit_ph || !cost) {
         alert("Please fill in all required fields.");
         return;
     }
@@ -251,6 +251,7 @@ function Inventory(){
                   <div>
                     <label className="block mb-1 text-gray-700">Item Category</label>
                     <SelectComp value={cat_id} onChange={(e) => set_cat_id(e.target.value)}>
+                        <option value="">Select Category</option>
                     {categories.map((category) => (
                         <option key={category.cat_id} value={category.cat_id}>{category.cat_name}</option>
                     ))}
@@ -262,23 +263,23 @@ function Inventory(){
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Quantity Available</label>
-                    <Input type="number" value={quantity} onChange={(e)=>set_quantity(e.target.value)} className="w-full" placeholder="set quantity available in our stock" />
+                    <Input type="number" value={quantity} onChange={(e)=>set_quantity(Math.max(0 , e.target.value))} className="w-full" placeholder="set quantity available in our stock" />
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Price For Indviduals</label>
-                    <Input type="number" value={price_unit_ind} onChange={(e)=>set_price_unit_ind(e.target.value)} className="w-full" placeholder="set price for individuals" />
+                    <Input type="number" value={price_unit_ind} onChange={(e)=>set_price_unit_ind(Math.max(0 , e.target.value))} className="w-full" placeholder="set price for individuals" />
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Price In Dozens</label>
-                    <Input type="number" value={price_dozen} onChange={(e)=>set_price_dozen(e.target.value)} className="w-full" placeholder="set price in dozen selling" />
+                    <Input type="number" value={price_dozen} onChange={(e)=>set_price_dozen(Math.max(0 , e.target.value))} className="w-full" placeholder="set price in dozen selling" />
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Price For Pharmacies</label>
-                    <Input type="number" value={price_unit_ph} onChange={(e)=>set_price_unit_ph(e.target.value)} className="w-full" placeholder="set price for pharmacies" />
+                    <Input type="number" value={price_unit_ph} onChange={(e)=>set_price_unit_ph(Math.max(0 , e.target.value))} className="w-full" placeholder="set price for pharmacies" />
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Cost</label>
-                    <Input type="number" value={cost} onChange={(e)=>set_cost(e.target.value)} className="w-full" placeholder="set the cost of this item" />
+                    <Input type="number" value={cost} onChange={(e)=>set_cost(Math.max(0 , e.target.value))} className="w-full" placeholder="set the cost of this item" />
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Description</label>
