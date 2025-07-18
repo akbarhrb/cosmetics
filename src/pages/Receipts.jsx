@@ -41,7 +41,8 @@ function Receipts(){
             </div>
 
             {/* receipts */}
-            <div className="grid lg:grid-cols-7 sm:grid-cols-2 grid-cols-1">
+            <div className="w-full grid lg:grid-cols-7 sm:grid-cols-2 grid-cols-1">
+                {receipts.length === 0 ? ( <div className="w-full text-3xl mt-5 text-center">no receipts</div> ): <div></div> }
                 {receipts.map((receipt)=>(
                     <Receipt receipt={receipt} />
                 ))}
