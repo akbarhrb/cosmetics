@@ -60,7 +60,8 @@ function CreateReceipt(){
             price_dozen: 0,
             price_unit_ind: 0,
             price: 0,
-            total: 0
+            total: 0,
+            notes : ''
         };
         setReceiptItems([...receiptItems , newReceiptItem]);
     }
@@ -211,7 +212,12 @@ function CreateReceipt(){
                                             }}
                                             className="w-[95%] m-1 mx-2 min-w-72"
                                         />
-                                    <Input type="number" value={receiptItem.quantity} onChange={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , e.target.value))} placeholder="quantity" className="w-[25%] m-1" />
+                                    <Input type="text" className="" placeholder="notes..." onChange={(e)=>updateItem(receiptItem.receipt_item_id , 'notes' , )}/>
+                                    <div className="w-full flex items-center justify-start mx-1">
+                                        <Input type="number" value={receiptItem.quantity} onChange={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , e.target.value))} placeholder="quantity" className="w-[25%] m-1" />
+                                        <Button variant="outline" className="mx-1" onClick={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , receiptItem.quantity + 1))}>+</Button>
+                                        <Button variant="outline" className="mx-1" onClick={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , receiptItem.quantity - 1))}>-</Button>
+                                    </div>
                                     <SelectComp value={receiptItem.price} onChange={(e)=>updateItem(receiptItem.receipt_item_id , "price" , e.target.value)}  className="w-[25%] m-1 mx-2">
                                         <option value={0}>select price</option>
                                         <option value={receiptItem.price_unit_ph} >pharmacies {receiptItem.price_unit_ph}$</option>
