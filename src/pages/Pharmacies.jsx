@@ -11,6 +11,7 @@ function Pharmacies(){
     const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [showForm, setShowForm] = useState(false);
     const [updateForm , setUpdateForm] = useState(false);
+    const [loading , setLoading] = useState(false);
 
     const toggleForm = () => {
       setUpdateForm(false);
@@ -24,10 +25,12 @@ function Pharmacies(){
     const [pharmacies , setPharmacies] = useState([]);
     
     async function getPharmacies(){
+      setLoading(true);
       try{
         const response = await axios.get(`${baseUrl}/getPharmacies.php`);
         setPharmacies(response.data);
         console.log(response.data); 
+        setLoading(false);
       }catch(e){
         console.error(e);
       }
@@ -156,6 +159,13 @@ function Pharmacies(){
                 </form>
               )}
               {/* Pharmacies List */}
+              {loading && 
+                    (
+                        <div className="flex justify-center items-center h-32">
+                            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    )
+                }
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {pharmacies.map((pharmacy) => (
             <Card key={pharmacy.id} className="">
