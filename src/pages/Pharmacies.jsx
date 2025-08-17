@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { MapPin , Phone , Edit  } from "lucide-react";
 import {Card, CardHeader, CardTitle, CardContent ,CardDescription} from '../components/Card';
 function Pharmacies(){
-    const baseUrl = "http://cosmetics-management.atwebpages.com";
+    const baseUrl = process.env.REACT_APP_API_URL;
     const [showForm, setShowForm] = useState(false);
     const [updateForm , setUpdateForm] = useState(false);
     const [loading , setLoading] = useState(false);
@@ -27,9 +27,8 @@ function Pharmacies(){
     async function getPharmacies(){
       setLoading(true);
       try{
-        const response = await axios.get(`${baseUrl}/getPharmacies.php`);
-        setPharmacies(response.data);
-        console.log(response.data); 
+        const response = await axios.get(`${baseUrl}/pharmacies`);
+        setPharmacies(response.data.data);
         setLoading(false);
       }catch(e){
         console.error(e);
@@ -57,7 +56,7 @@ function Pharmacies(){
     };
 
     try {
-      const response = await axios.post(`${baseUrl}/addPharmacy.php`, newPharmacy);
+      const response = await axios.post(`${baseUrl}/add-pharmacy`, newPharmacy);
 
       // Assuming the backend returns 201 on success
       if (response.status === 201) {
