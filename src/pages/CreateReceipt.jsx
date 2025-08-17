@@ -23,7 +23,7 @@ function CreateReceipt(){
     async function getPharmacies(){
       try{
         const response = await axios.get(`${baseUrl}/pharmacies`);
-        setPharmacies(response.data);
+        setPharmacies(response.data.data);
         console.log(response.data); 
       }catch(e){
         console.error(e);
@@ -38,7 +38,7 @@ function CreateReceipt(){
         axios
         .get(`${baseUrl}/items`)
         .then((res) => {
-            setItems(res.data);
+            setItems(res.data.data);
         })
         .catch((error) => {
             console.error(error);
@@ -111,6 +111,7 @@ function CreateReceipt(){
     const [receipt_id , set_receipt_id] = useState();
     async function createReceipt(){
         try{
+            console.log(pharmacies);
             const receipt = {
                 'pharmacy_id': pharmacy_id,
                 'date': date
@@ -123,19 +124,23 @@ function CreateReceipt(){
                 alert('cant create empty receipt');
                 return;
             }
-            const response = await axios.post(`${baseUrl}/add-receipt` , receipt);
-            if(response.data['success']){
+            console.log("===========");
+            console.log(pharmacy_id);
+            const response = await axios.post(`${baseUrl}/add-receipt` , {'pharmacy_id' : pharmacy_id});
+            console.log(response);
+            if(response.status === 201){
                 set_receipt_id(response.data.data['id']);
             }else{
                 alert(response.data['message']);
             }
             const rcpItems = {
-                'receipt_id' : response.data['receipt_id'],
+                'receipt_id' : response.data.data['receipt_id'],
                 'receipt_items' : receiptItems
             }
-            const res = await axios.post(`${baseUrl}/add-receipt-item` , rcpItems);
+            const res = await axios.post(`${baseUrl}/add-receipt-items` , rcpItems);
+            console.log(res);
             setReceiptItems([]);
-            navigate('/receipts');
+            // navigate('/receipts');
         }catch(e){
             alert(e);
         }
@@ -171,7 +176,7 @@ function CreateReceipt(){
                             <SelectComp className="w-[50%] m-1" value={pharmacy_id} onChange={(e)=>set_pharmacy_id(e.target.value)} >
                                 <option value={null}>Select Pharmacy</option>
                                 {pharmacies.map((pharmacy) => (
-                                    <option key={pharmacy.pharmacy_id} value={pharmacy.pharmacy_id}>{pharmacy.pharmacy_name}</option>
+                                    <option key={pharmacy.id} value={pharmacy.id}>{pharmacy.pharmacy_name}</option>
                                 ))}
                             </SelectComp>  
                             <Input type="date" value = {date} onChange={(e) => setDate(e.target.value)} className="w-[50%] m-1"/>

@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import axios from "axios";
 import dayjs from 'dayjs';
+
+const baseUrl = process.env.REACT_APP_API_URL;
+
 function ReceiptDetails(){
-  const baseUrl = "http://cosmetics-management.atwebpages.com";
   const { id } = useParams();
   const [receipt , setReceipt] = useState();
   const [items , setItems] = useState([]);
@@ -15,8 +17,8 @@ function ReceiptDetails(){
       'receipt_id' : id
     }
     try{
-      const response = await axios.post(`${baseUrl}/getReceiptDetails.php` , data);
-      if(response.data['success']){
+      const response = await axios.get(`${baseUrl}/receipt/${id}/items`);
+      if(response.status === 200){
         setReceipt(response.data['data'][0]);
         setItems(response.data['data']);
         console.log(response.data['data']);
