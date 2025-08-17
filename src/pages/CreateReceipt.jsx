@@ -8,8 +8,10 @@ import Select from "react-select";
 import axios from "axios";
 import {v4 as uuid} from 'uuid';
 import { useLocation, useNavigate } from "react-router-dom";
+
+const baseUrl = process.env.REACT_APP_API_URL;
+
 function CreateReceipt(){
-    const baseUrl = "http://cosmetics-management.atwebpages.com";
     const [pharmacies , setPharmacies] = useState([]);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -20,7 +22,7 @@ function CreateReceipt(){
     const navigate = useNavigate();
     async function getPharmacies(){
       try{
-        const response = await axios.get(`${baseUrl}/getPharmacies.php`);
+        const response = await axios.get(`${baseUrl}/pharmacies`);
         setPharmacies(response.data);
         console.log(response.data); 
       }catch(e){
@@ -34,7 +36,7 @@ function CreateReceipt(){
     const [items , setItems] = useState([]);
     async function getItems() {
         axios
-        .get(`${baseUrl}/getitems.php`)
+        .get(`${baseUrl}/items`)
         .then((res) => {
             setItems(res.data);
         })
@@ -108,7 +110,6 @@ function CreateReceipt(){
     }
     const [receipt_id , set_receipt_id] = useState();
     async function createReceipt(){
-        console.log("Adding");
         try{
             const receipt = {
                 'pharmacy_id': pharmacy_id,
@@ -122,11 +123,9 @@ function CreateReceipt(){
                 alert('cant create empty receipt');
                 return;
             }
-            const response = await axios.post(`${baseUrl}/createReceipt.php` , receipt);
-            console.log(response);
-            console.log(response.data);
+            const response = await axios.post(`${baseUrl}/add-receipt` , receipt);
             if(response.data['success']){
-                set_receipt_id(response.data['receipt_id']);
+                set_receipt_id(response.data.data['id']);
             }else{
                 alert(response.data['message']);
             }
@@ -134,9 +133,7 @@ function CreateReceipt(){
                 'receipt_id' : response.data['receipt_id'],
                 'receipt_items' : receiptItems
             }
-            const res = await axios.post(`${baseUrl}/addReceiptItems.php` , rcpItems);
-            console.log(res.data);
-            console.log(receiptItems);
+            const res = await axios.post(`${baseUrl}/add-receipt-item` , rcpItems);
             setReceiptItems([]);
             navigate('/receipts');
         }catch(e){
