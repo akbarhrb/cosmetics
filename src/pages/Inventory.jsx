@@ -13,13 +13,12 @@ function Inventory(){
     const [showForm , setShowForm] = useState(false);
     function toggleButton(){
         setShowForm(!showForm);
-        console.log(showForm);
     }
     const [process , setProcess] = useState('Add New Item');
     //item attributes
     const [item_id , set_item_id] = useState();
     const [item_name , set_item_name] = useState();
-    const [cat_id, set_cat_id] = useState();
+    const [category_id, set_cat_id] = useState();
     const [item_color , set_item_color] = useState('');
     const [quantity , set_quantity] = useState(0);
     const [price_unit_ind , set_price_unit_ind] = useState();
@@ -99,13 +98,13 @@ function Inventory(){
         e.preventDefault();
 
         // Validate required fields
-        if (!cat_id || !item_name || !price_unit_ind || !price_dozen || !price_unit_ph || !cost) {
+        if (!category_id || !item_name || !price_unit_ind || !price_dozen || !price_unit_ph || !cost) {
             alert("Please fill in all required fields.");
             return;
         }
 
         const newItem = {
-            cat_id,
+            category_id,
             item_name,
             item_color,
             quantity,
@@ -131,10 +130,8 @@ function Inventory(){
                 getItems(); // refresh list
             } else {
                 alert(response.data.error || "Something went wrong.");
-                console.log(response);
             }
         }catch(error){
-            console.log("error here");
             alert(error);  
         }
     }
@@ -153,12 +150,12 @@ function Inventory(){
         search();
     }, [searchTerm])
     function EditItem(selectedItem){
-        const item = items.find((item)=> item.item_id == selectedItem.item_id);
+        const item = items.find((item)=> item.id === selectedItem.id);
         setShowForm(true);
         setProcess("Update");
-        set_item_id(item.item_id);
+        set_item_id(item.id);
         set_item_name(item.item_name);
-        set_cat_id(item.cat_id);
+        set_cat_id(item.category_id);
         set_item_color(item.item_color);
         set_quantity(item.quantity);
         set_price_unit_ind(item.price_unit_ind);
@@ -167,11 +164,12 @@ function Inventory(){
         set_cost(item.cost);
         set_description(item.description);
     }
-    async function updateItem(item_id){
+    async function updateItem(e, item_id){
+        e.preventDefault();
         const data = {
             'item_id' : item_id,
             'item_name' : item_name,
-            'cat_id' : cat_id,
+            'category_id' : category_id,
             'item_color' : item_color,
             'quantity' : quantity,
             'price_unit_ind' : price_unit_ind,
@@ -182,7 +180,8 @@ function Inventory(){
         }
         try{
             const response = await axios.put(`${baseUrl}/update-item/${item_id}` , data);
-            if(response.data['success']){
+
+            if(response.status === 201){
                 set_item_name();
                 set_cat_id();
                 set_item_color('');
@@ -194,8 +193,9 @@ function Inventory(){
                 set_description('');
                 setShowForm(false);
                 setProcess('Add New Item');
+                getItems();
             }else{
-                alert(response.data);
+                alert(response.data.data.message);
             }
         }catch(e){
             alert(e);
@@ -205,7 +205,7 @@ function Inventory(){
     if (!window.confirm("Are you sure you want to delete this item? note that before deleting the item delete all receipts that includes this item")) return;
     try {
         const response = await axios.delete(`${baseUrl}/delete-item/${item_id}`);
-        if (response.data.success) {
+        if (response.status === 201) {
             set_item_name();
             set_cat_id();
             set_item_color('');
@@ -220,7 +220,7 @@ function Inventory(){
             setShowForm(false);
             getItems(); 
         }else {
-        alert("Failed to delete: " + response.data.message);
+        alert("Failed to delete: " + response.data.data.message);
         }
     } catch (e) {
         alert("Error deleting item: " + e.message);
@@ -251,10 +251,10 @@ function Inventory(){
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Item Category</label>
-                    <SelectComp value={cat_id} onChange={(e) => set_cat_id(e.target.value)}>
+                    <SelectComp value={category_id} onChange={(e) => set_cat_id(e.target.value)}>
                         <option value="">Select Category</option>
                     {categories.length > 0 && categories.map((category) => (
-                        <option key={category.cat_id} value={category.cat_id}>{category.cat_name}</option>
+                        <option key={category.id} value={category.id}>{category.cat_name}</option>
                     ))}
                     </SelectComp>
                   </div>
@@ -297,7 +297,7 @@ function Inventory(){
                 <div className="bg-white p-4 rounded-md shadow-md mx-4 mb-6">
                     <h2 className="lg:text-2xl sm:text-lg font-bold text-red-500 mb-3">Required Items</h2>
                     {requiredItems.map((reqItem) => (
-                        <div key={reqItem.item_id} className="text-red-600 border-b py-1">
+                        <div key={reqItem.id} className="text-red-600 border-b py-1">
                             {reqItem.item_name} : {reqItem.total_required_quantity} unit needed
                         </div>
                     ))}
@@ -320,12 +320,12 @@ function Inventory(){
                 )}
                 <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
                     { filteredItems.length > 0 && filteredItems.map( item => (
-                    
-                        <Card className="m-4" >
+                        
+                        <Card key={item.id} className="m-4" >
                             <CardHeader className="justify-start">
                                 
                                 <CardTitle className="flex items-center" >{item.item_name} <Edit className="mt-2 text-green-700" onClick={()=>EditItem(item)} ></Edit></CardTitle> 
-                                <CardDescription className="m-1" ><p className="text-gray-600" >{item.cat_name}</p></CardDescription>
+                                
                             </CardHeader>
                             <CardContent>
                                <div className="flex flex-row justify-between w-full">
