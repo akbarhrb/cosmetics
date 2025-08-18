@@ -6,8 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import Button from "../components/Button";
 import SelectComp from "../components/SelectComp";
 import { Edit } from "lucide-react";
+
+const baseUrl = process.env.REACT_APP_API_URL;
 function Inventory(){
-    const baseUrl = "http://cosmetics-management.atwebpages.com";
+
     const [showForm , setShowForm] = useState(false);
     function toggleButton(){
         setShowForm(!showForm);
@@ -34,11 +36,10 @@ function Inventory(){
     async function getItems() {
         setLoading(true);
         axios
-        .get(`${baseUrl}/getitems.php`)
+        .get(`${baseUrl}/items`)
         .then((res) => {
-            setItems(res.data);
-            setFilteredItems(res.data);
-            console.log(res.data);
+            setItems(res.data.data);
+            setFilteredItems(res.data.data);
             setLoading(false); 
         })
         .catch((error) => {
@@ -49,9 +50,9 @@ function Inventory(){
     const [categories , setCategories] = useState([]);
     async function getcategories(){
         axios
-        .get(`${baseUrl}/getcategories.php`)
+        .get(`${baseUrl}/categories`)
         .then((res)=>{
-            setCategories(res.data);
+            setCategories(res.data.data);
         })
         .catch((error) =>{
             console.error(error);
@@ -90,64 +91,64 @@ function Inventory(){
     }, []);
     useEffect(() => {
         if (items.length > 0) {
-            getRequiredItems();
+            // getRequiredItems();
         }
     }, [items]);
+
     async function addItem(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    // Validate required fields
-    if (!cat_id || !item_name || !price_unit_ind || !price_dozen || !price_unit_ph || !cost) {
-        alert("Please fill in all required fields.");
-        return;
-    }
-
-    const newItem = {
-        cat_id,
-        item_name,
-        item_color,
-        quantity,
-        price_unit_ind,
-        price_dozen,
-        price_unit_ph,
-        cost,
-        description,
-    };
-
-    try{
-       const response = await axios.post(`${baseUrl}/additem.php`, newItem)
-        .then(res => {
-        if (res.data.success) {
-            set_item_name('');
-            set_item_color('');
-            set_quantity('');
-            set_price_unit_ind('');
-            set_price_dozen('');
-            set_price_unit_ph('');
-            set_cost('');
-            set_description('');
-            set_cat_id('');
-            setShowForm(false);
-            getItems(); // refresh list
-        } else {
-            alert(res.data.error || "Something went wrong.");
+        // Validate required fields
+        if (!cat_id || !item_name || !price_unit_ind || !price_dozen || !price_unit_ph || !cost) {
+            alert("Please fill in all required fields.");
+            return;
         }
-        })
-        .catch(error => {
-        console.log(error);
-        alert(error);
-        });
-    }catch(error){
-        alert(error);
-    }
+
+        const newItem = {
+            cat_id,
+            item_name,
+            item_color,
+            quantity,
+            price_unit_ind,
+            price_dozen,
+            price_unit_ph,
+            cost,
+            description,
+        };
+        try{
+            const response = await axios.post(`${baseUrl}/add-item`, newItem);
+            if (response.status === 201) {
+                set_item_name('');
+                set_item_color('');
+                set_quantity('');
+                set_price_unit_ind('');
+                set_price_dozen('');
+                set_price_unit_ph('');
+                set_cost('');
+                set_description('');
+                set_cat_id('');
+                setShowForm(false);
+                getItems(); // refresh list
+            } else {
+                alert(response.data.error || "Something went wrong.");
+                console.log(response);
+            }
+        }catch(error){
+            console.log("error here");
+            alert(error);  
+        }
     }
 
 
     //search function
     function search(){
-        setFilteredItems(items.filter(item => item.item_name.toLowerCase().includes(searchTerm.toLowerCase())));  
-        
+        if(items.length > 0){
+            setFilteredItems(items.filter(item => item.item_name.toLowerCase().includes(searchTerm.toLowerCase())));  
+        }else{
+            setFilteredItems([]);
+        }
     }
+
     useEffect(()=>{
         search();
     }, [searchTerm])
@@ -166,7 +167,7 @@ function Inventory(){
         set_cost(item.cost);
         set_description(item.description);
     }
-    async function updateItem(){
+    async function updateItem(item_id){
         const data = {
             'item_id' : item_id,
             'item_name' : item_name,
@@ -180,7 +181,7 @@ function Inventory(){
             'description' : description
         }
         try{
-            const response = await axios.post(`${baseUrl}/updateItem.php` , data);
+            const response = await axios.put(`${baseUrl}/update-item/${item_id}` , data);
             if(response.data['success']){
                 set_item_name();
                 set_cat_id();
@@ -200,25 +201,25 @@ function Inventory(){
             alert(e);
         }
     }
-    async function softDeleteItem(id) {
+    async function softDeleteItem(item_id) {
     if (!window.confirm("Are you sure you want to delete this item? note that before deleting the item delete all receipts that includes this item")) return;
     try {
-        const response = await axios.post(`${baseUrl}/deleteItem.php`, { item_id: id });
+        const response = await axios.delete(`${baseUrl}/delete-item/${item_id}`);
         if (response.data.success) {
             set_item_name();
-                set_cat_id();
-                set_item_color('');
-                set_quantity();
-                set_price_unit_ind();
-                set_price_dozen();
-                set_price_unit_ph();
-                set_cost();
-                set_description('');
-        alert("Item deleted.");
-        setProcess("Add New Item");
-        setShowForm(false);
-        getItems(); 
-        } else {
+            set_cat_id();
+            set_item_color('');
+            set_quantity();
+            set_price_unit_ind();
+            set_price_dozen();
+            set_price_unit_ph();
+            set_cost();
+            set_description('');
+            alert("Item deleted.");
+            setProcess("Add New Item");
+            setShowForm(false);
+            getItems(); 
+        }else {
         alert("Failed to delete: " + response.data.message);
         }
     } catch (e) {
@@ -252,7 +253,7 @@ function Inventory(){
                     <label className="block mb-1 text-gray-700">Item Category</label>
                     <SelectComp value={cat_id} onChange={(e) => set_cat_id(e.target.value)}>
                         <option value="">Select Category</option>
-                    {categories.map((category) => (
+                    {categories.length > 0 && categories.map((category) => (
                         <option key={category.cat_id} value={category.cat_id}>{category.cat_name}</option>
                     ))}
                     </SelectComp>
@@ -286,7 +287,7 @@ function Inventory(){
                     <Input type="text" value={description} onChange={(e)=>set_description(e.target.value)} className="w-full" placeholder="description of the item (optional)"/>
                   </div>
 
-                  <Button type="submit" onClick={ process == "Update" ? (e)=>updateItem(e) :(e)=> addItem(e) } variant="success" className="w-[100%]" >{process}</Button>
+                  <Button type="submit" onClick={ process == "Update" ? (e)=>updateItem(e , item_id) :(e)=> addItem(e) } variant="success" className="w-[100%]" >{process}</Button>
                   {
                     process == "Update" ? <Button variant="danger" className="w-full my-2" onClick={()=>softDeleteItem(item_id)} >Soft Delete</Button> : ''
                   }
@@ -318,7 +319,7 @@ function Inventory(){
                     </div>
                 )}
                 <div className="main grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ">
-                    { filteredItems.map( item => (
+                    { filteredItems.length > 0 && filteredItems.map( item => (
                     
                         <Card className="m-4" >
                             <CardHeader className="justify-start">
