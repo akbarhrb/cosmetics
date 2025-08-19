@@ -28,7 +28,7 @@ function Pharmacies(){
       setLoading(true);
       try{
         const response = await axios.get(`${baseUrl}/pharmacies`);
-        setPharmacies(response.data.data);
+        setPharmacies(response.data.data);  
         setLoading(false);
       }catch(e){
         console.error(e);
@@ -49,9 +49,9 @@ function Pharmacies(){
 
   if (trimmedName && trimmedOwner && trimmedPhone && trimmedAddress) {
     const newPharmacy = {
-      pharmacyName: trimmedName,
-      owner: trimmedOwner,
-      phoneNumber: trimmedPhone,
+      pharmacy_name: trimmedName,
+      pharmacy_owner: trimmedOwner,
+      phone_number: trimmedPhone,
       address: trimmedAddress
     };
 
@@ -89,29 +89,14 @@ function Pharmacies(){
         }
       }
       setIdToUpdate(pharmacy.id);
-      setName(pharmacy.name);
-      setOwner(pharmacy.owner);
-      setPhoneNumber(pharmacy.phoneNumber);
+      setName(pharmacy.pharmacy_name);
+      setOwner(pharmacy.pharmacy_owner);
+      setPhoneNumber(pharmacy.phone_number);
       setAddress(pharmacy.address);
-      
-      
     }
     function updatePharmacy(e){
       e.preventDefault();
-      const updatedPharmacies = pharmacies.map(p=>{
-        if(p.id === idToUpdate){
-          return {
-            ...p,
-            name : pharmacyName,
-            owner: owner,
-            phoneNumber : phoneNumber,
-            address : address
-          };
-          
-        }
-        return p;
-      });
-      setPharmacies(updatedPharmacies);
+
       setUpdateForm(false);
       setShowForm(false);
       setIdToUpdate(null);

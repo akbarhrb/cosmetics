@@ -39,6 +39,7 @@ function CreateReceipt(){
         .get(`${baseUrl}/items`)
         .then((res) => {
             setItems(res.data.data);
+            console.log(items);
         })
         .catch((error) => {
             console.error(error);
@@ -134,13 +135,15 @@ function CreateReceipt(){
                 alert(response.data['message']);
             }
             const rcpItems = {
-                'receipt_id' : response.data.data['receipt_id'],
+                'receipt_id' : response.data.data['id'],
                 'receipt_items' : receiptItems
             }
+            console.log(rcpItems);
             const res = await axios.post(`${baseUrl}/add-receipt-items` , rcpItems);
+            
             console.log(res);
             setReceiptItems([]);
-            // navigate('/receipts');
+            navigate('/receipts');
         }catch(e){
             alert(e);
         }
@@ -205,8 +208,9 @@ function CreateReceipt(){
                                             value={options.find(opt => opt.value === receiptItem.item_id)}
                                             onChange={(selected) => {
                                                 const selectedItem = items.find(item => item.item_id === selected.value);
+                                                console.log(selectedItem);
                                                 updateMultipleFields(receiptItem.receipt_item_id, {
-                                                    item_id: selectedItem.item_id,
+                                                    item_id: selectedItem.id,
                                                     price_unit_ph: selectedItem.price_unit_ph,
                                                     price_dozen: selectedItem.price_dozen,
                                                     price_unit_ind: selectedItem.price_unit_ind
