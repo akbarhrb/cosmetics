@@ -4,24 +4,22 @@ import Header from "../components/Header";
 import Receipt from "../components/Receipt";
 import { useEffect, useRef, useState } from "react";
 function Receipts(){
-    const baseUrl = "http://cosmetics-management.atwebpages.com";
+    const baseUrl = process.env.REACT_APP_API_URL;
     const [receipts , setReceipts] = useState([]);
     const [status , setStatus] = useState('pending');
     async function getReceipts(receipts_status){
         setStatus(receipts_status);
         try{
-            const data = {
-                'status' : receipts_status
-            }
-            const response = await axios.post(`${baseUrl}/getReceipts.php` , data );
-            if(response.data['success']){
-                setReceipts(response.data['data']);
-                console.log(response.data['data']);
+            const response = await axios.get(`${baseUrl}/receipts/${receipts_status}`);
+            console.log(response);
+            if(response.status === 200){
+                setReceipts(response.data.receipts);
+                
             }else{
-                console.log(`error:  ${response.data['message']}` );
+                console.log(`error:  ${response.data.data['error']}` );
             }
         }catch(e){
-            alert(e);
+            console.log(e);
         }
     }
     useEffect(()=>{
@@ -37,7 +35,7 @@ function Receipts(){
                 <Button variant={status === "draft" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('draft')}>draft</Button>
                 <Button variant={status === "pending" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('pending')}>pending</Button>
                 <Button variant={status === "closed" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('closed')}>closed</Button>
-                <Button variant={status === "returned" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('returned')}>returned</Button>
+                <Button variant={status === "returned" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('deleted')}>returned</Button>
             </div>
 
             {/* receipts */}

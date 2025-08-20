@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import axios from "axios";
 import dayjs from 'dayjs';
+import Button from "../components/Button";
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -10,23 +11,21 @@ function ReceiptDetails(){
   const { id } = useParams();
   const [receipt , setReceipt] = useState();
   const [items , setItems] = useState([]);
+  const [pharmacy , setPharmacy] = useState();
   const [loading, setLoading] = useState(true);
   async function getReceiptDetails(){
     setLoading(true);
-    const data = {
-      'receipt_id' : id
-    }
     try{
       const response = await axios.get(`${baseUrl}/receipt/${id}/items`);
       if(response.status === 200){
-        setReceipt(response.data['data'][0]);
-        setItems(response.data['data']);
-        console.log(response.data['data']);
+        setReceipt(response.data.data[0].receipt);
+        setPharmacy(response.data.pharmacy[0]);
+        setItems(response.data.data);
       }else{
-        console.log(response.data);
+        console.log(response);
       }
     }catch(e){
-      alert(e)
+      console.log(e);
     }finally{
       setLoading(false);
     }
@@ -45,7 +44,22 @@ function ReceiptDetails(){
     getReceiptDetails();
   },[])
 
-    return (
+  const navigator = useNavigate();
+
+  async function returnReceipt(id){
+    try{
+      setLoading(true);
+      const response =  await axios.patch(`${baseUrl}/update-r-status/${id}` , {'status' : 'deleted'});
+      if(response.status === 200){
+        navigator('/receipts');
+      }else{
+        console.log(response);
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
+  return (
   <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
     <Header />
     
@@ -56,13 +70,13 @@ function ReceiptDetails(){
         <div ref={printRef} className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg mt-4 p-6 print:shadow-none print:p-0 print:rounded-none">
           <div className="text-center mb-6 border-b pb-4">
             <h1 className="text-2xl font-bold text-blue-700">Receipt</h1>
-            <p className="text-sm text-gray-600">Receipt No: #{receipt.receipt_id}</p>
+            <p className="text-sm text-gray-600">Receipt No: #{receipt.id}</p>
           </div>
 
           <div className="mb-4">
-            <p><span className="font-semibold">Pharmacy Name:</span> {receipt.pharmacy_name}</p>
-            <p><span className="font-semibold">Pharmacy Owner:</span> {receipt.pharmacy_owner}</p>
-            <p><span className="font-semibold">Order Date:</span> {dayjs(receipt.receipt_created_at).format('DD-MM-YYYY')}</p>
+            <p><span className="font-semibold">Pharmacy Name:</span> {pharmacy['pharmacy_name']}</p>
+            <p><span className="font-semibold">Pharmacy Owner:</span> {pharmacy['pharmacy_owner']}</p>
+            <p><span className="font-semibold">Delivre Date:</span> {dayjs(new Date()).format('DD-MM-YYYY')}</p>
           </div>
           <div>
             <hr />
@@ -76,10 +90,10 @@ function ReceiptDetails(){
               <tbody className="text-center">
                 {items.map((item)=>
                 ( <tr className="my-1">
-                  <td>{item.total_quantity}</td>
-                  <td>{item.item_name}</td>
-                  <td>{item.price}</td>
-                  <td>{item.price * item.total_quantity}</td>
+                  <td>{item.quantity} units</td>
+                  <td>{item.item.item_name}</td>
+                  <td>{item.price}$</td>
+                  <td>{item.price * item.quantity}$</td>
                 </tr> )
               )}
               </tbody>
@@ -94,8 +108,13 @@ function ReceiptDetails(){
         <div className="mt-4 text-center">
           <button
             onClick={handlePrint}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-blue-700 transition"
           >Print Receipt
+          </button>
+          <button
+            onClick={()=>returnReceipt(receipt.id)}
+            className="bg-red-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-red-700 transition"
+          >Return Receipt
           </button>
         </div>
       </div>
