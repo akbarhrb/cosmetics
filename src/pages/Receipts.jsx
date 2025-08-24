@@ -35,12 +35,12 @@ function Receipts(){
                 <Button variant={status === "draft" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('draft')}>draft</Button>
                 <Button variant={status === "pending" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('pending')}>pending</Button>
                 <Button variant={status === "closed" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('closed')}>closed</Button>
-                <Button variant={status === "returned" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('deleted')}>returned</Button>
+                <Button variant={status === "deleted" ? 'default' : 'white'} className="w-full m-3" onClick={()=>getReceipts('deleted')}>returned</Button>
             </div>
 
             {/* receipts */}
+            {receipts.length === 0 ? ( <div className="w-full flex items-center justify-center"><div className="w-fit text-3xl mt-5 p-3 rounded-lg text-center border-solid border-2 bg-white cursor-pointer hover:scale-105 duration-100">No Receipts</div></div> ): ''}
             <div className="w-full grid lg:grid-cols-7 sm:grid-cols-2 grid-cols-1">
-                {receipts.length === 0 ? ( <div className="w-full text-3xl mt-5 text-center">no receipts</div> ): <div></div> }
                 {receipts.map((receipt)=>(
                     <Receipt receipt={receipt} />
                 ))}

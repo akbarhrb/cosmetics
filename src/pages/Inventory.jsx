@@ -114,6 +114,7 @@ function Inventory(){
             cost,
             description,
         };
+        console.log(newItem);
         try{
             const response = await axios.post(`${baseUrl}/add-item`, newItem);
             if (response.status === 201) {
@@ -125,7 +126,7 @@ function Inventory(){
                 set_price_unit_ph('');
                 set_cost('');
                 set_description('');
-                set_cat_id('');
+                set_cat_id();
                 setShowForm(false);
                 getItems(); // refresh list
             } else {

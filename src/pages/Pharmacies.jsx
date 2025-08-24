@@ -28,6 +28,7 @@ function Pharmacies(){
       setLoading(true);
       try{
         const response = await axios.get(`${baseUrl}/pharmacies`);
+        console.log(response.data.data);
         setPharmacies(response.data.data);  
         setLoading(false);
       }catch(e){
@@ -180,13 +181,13 @@ function Pharmacies(){
                       </div>
                       <div>
                         <span className="text-gray-500">Last Order:</span>
-                        <div className="font-semibold text-gray-900">{dayjs(pharmacy.last_order_date).format('DD-MM-YYYY')}</div>
+                        <div className="font-semibold text-gray-900">{dayjs(pharmacy.updated_at).format('DD-MM-YYYY')}</div>
                       </div>
                     </div>
                   </div>
                   <div className="pt-3 flex flex-row">
                     <Button variant="outline" className="w-full">
-                      <Link to={`/create-receipt?pharmacy_id=${pharmacy.pharmacy_id}`} className="flex items-center justify-center w-full">
+                      <Link to={`/create-receipt?pharmacy_id=${pharmacy.id}`} className="flex items-center justify-center w-full">
                         Create Receipt
                       </Link>
                     </Button>
