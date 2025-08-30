@@ -3,9 +3,40 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../co
 import { CalendarIcon, Package, Receipt, Store, BarChart3, DollarSign, TrendingUp, FileText } from 'lucide-react';
 import Button from "../components/Button";
 import Input from "../components/Input";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 
 function Report(){
+    const baseUrl = process.env.REACT_APP_API_URL;
+
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // Format the dates as YYYY-MM-DD
+    const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+    };
+
+    const [from_date, set_from_date] = useState(formatDate(firstDayOfMonth));
+    const [to_date, set_to_date] = useState(formatDate(today));
+
+    async function getReport(){
+        const data = {
+            'from_date' : from_date,
+            'to_date' : to_date
+        };
+        try{
+            console.log(data);
+            const response = await axios.post(`${baseUrl}/report` , data);
+            console.log(response);
+        }catch(e){
+            console.log(e);
+        }
+    }
+    useEffect(()=>{
+        getReport();
+    },[]);
     const reportsData = {
         totalRevenue: 15750.50,
         totalReceipts: 48,
@@ -38,12 +69,12 @@ function Report(){
                     <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex flex-col space-y-2">
                         <label className="text-sm font-medium">From Date</label>
-                        <Input type="Date" />
+                        <Input type="Date" value={from_date} />
                     </div>
                     
                     <div className="flex flex-col space-y-2">
                         <label className="text-sm font-medium">To Date</label>
-                        <Input type="Date" />
+                        <Input type="Date" value={to_date}/>
                     </div>
                     
                     <div className="flex items-end">
