@@ -10,16 +10,18 @@ import { useEffect, useState } from "react";
 function Report(){
     const baseUrl = process.env.REACT_APP_API_URL;
 
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const today = new Date().toISOString().split("T")[0];
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
 
-    // Format the dates as YYYY-MM-DD
-    const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
-    };
+    const [from_date, set_from_date] = useState(firstDayOfMonth);
+    const [to_date, set_to_date] = useState(today);
 
-    const [from_date, set_from_date] = useState(formatDate(firstDayOfMonth));
-    const [to_date, set_to_date] = useState(formatDate(today));
+    const [items , setItems] = useState(0);
+    const [pharmacies , setPharmacies] = useState(0);
+    const [receipts_total , set_receipts_total] = useState(0);
+    const [receipts_count , set_receipts_count] = useState(0);
+    const [total_cost , set_total_cost] = useState(0);
 
     async function getReport(){
         const data = {
@@ -30,6 +32,11 @@ function Report(){
             console.log(data);
             const response = await axios.post(`${baseUrl}/report` , data);
             console.log(response);
+            setPharmacies(response.data.pharmacies.length);
+            setItems(response.data.items.length);
+            set_receipts_total(response.data.receipts_total);
+            set_receipts_count(response.data.receipts_count);
+            set_total_cost(response.data.total_cost);
         }catch(e){
             console.log(e);
         }
@@ -37,14 +44,7 @@ function Report(){
     useEffect(()=>{
         getReport();
     },[]);
-    const reportsData = {
-        totalRevenue: 15750.50,
-        totalReceipts: 48,
-        totalReceiptsAmount: 15750.50,
-        totalPharmacies: 8,
-        totalInventoryItems: 156,
-        monthlyTrend: '+23%'
-    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             {/* header with navbar*/}
@@ -69,16 +69,16 @@ function Report(){
                     <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex flex-col space-y-2">
                         <label className="text-sm font-medium">From Date</label>
-                        <Input type="Date" value={from_date} />
+                        <Input type="date" value={from_date} onChange={(e)=>set_from_date(e.target.value)} />
                     </div>
                     
                     <div className="flex flex-col space-y-2">
                         <label className="text-sm font-medium">To Date</label>
-                        <Input type="Date" value={to_date}/>
+                        <Input type="date" value={to_date} onChange={(e)=>set_to_date(e.target.value)} />
                     </div>
                     
                     <div className="flex items-end">
-                        <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Button className="bg-blue-600 hover:bg-blue-700" onClick={()=>getReport()}>
                         Generate Report
                         </Button>
                     </div>
@@ -94,10 +94,10 @@ function Report(){
                     <DollarSign className="h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                    <div className="text-2xl font-bold">${reportsData.totalRevenue.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">${receipts_total - total_cost}</div>
                     <p className="text-xs text-green-100 flex items-center">
                         <TrendingUp className="h-3 w-3 mr-1" />
-                        {reportsData.monthlyTrend} from last period
+                         from last period
                     </p>
                     </CardContent>
                 </Card>
@@ -108,7 +108,7 @@ function Report(){
                     <Receipt className="h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                    <div className="text-2xl font-bold">{reportsData.totalReceipts}</div>
+                    <div className="text-2xl font-bold">{receipts_count}</div>
                     <p className="text-xs text-blue-100">Receipts created</p>
                     </CardContent>
                 </Card>
@@ -119,7 +119,7 @@ function Report(){
                     <FileText className="h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                    <div className="text-2xl font-bold">${reportsData.totalReceiptsAmount.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">${receipts_total}</div>
                     <p className="text-xs text-purple-100">Total receipts value</p>
                     </CardContent>
                 </Card>
@@ -130,7 +130,7 @@ function Report(){
                     <Store className="h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                    <div className="text-2xl font-bold">{reportsData.totalPharmacies}</div>
+                    <div className="text-2xl font-bold">{pharmacies}</div>
                     <p className="text-xs text-orange-100">Active clients</p>
                     </CardContent>
                 </Card>
@@ -141,7 +141,7 @@ function Report(){
                     <Package className="h-4 w-4" />
                     </CardHeader>
                     <CardContent>
-                    <div className="text-2xl font-bold">{reportsData.totalInventoryItems}</div>
+                    <div className="text-2xl font-bold">{items}</div>
                     <p className="text-xs text-teal-100">Products in stock</p>
                     </CardContent>
                 </Card>
