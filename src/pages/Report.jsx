@@ -1,6 +1,6 @@
 import Header from "../components/Header";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../components/Card";
-import { CalendarIcon, Package, Receipt, Store, BarChart3, DollarSign, TrendingUp, FileText } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from "../components/Card";
+import { CalendarIcon, Package, Receipt, Store, DollarSign, TrendingUp, FileText } from 'lucide-react';
 import Button from "../components/Button";
 import Input from "../components/Input";
 import axios from "axios";

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import Button from "../components/Button";
 import SelectComp from "../components/SelectComp";
 import { Edit } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const baseUrl = process.env.REACT_APP_API_URL;
 function Inventory(){
@@ -241,7 +242,10 @@ function Inventory(){
                         <h1 className="text-lg sm:text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">Inventory Management</h1>
                         <p className="text-gray-600 mt-2">Track and manage your cosmetic products</p>
                     </div>
-                    <Button className="" onClick={toggleButton} variant="success">{showForm? 'Cancel' : 'Add Product'}</Button>
+                    <div>
+                        <Button><Link to="/categories">Add Category</Link></Button>
+                        <Button className="mx-1 my-1" onClick={toggleButton} variant="success">{showForm? 'Cancel' : 'Add Product'}</Button>
+                    </div>
                 </div>
                 {/* show form*/}
               {showForm && (

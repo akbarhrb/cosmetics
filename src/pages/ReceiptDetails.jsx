@@ -59,6 +59,20 @@ function ReceiptDetails(){
       console.log(e);
     }
   }
+  
+  async function closeReceipt(id){
+    try{
+      const response = await axios.post(`${baseUrl}/close-receipt` , {'receipt_id' : id});
+      if(response.status == 200){
+        navigator('/receipts');
+      }else{
+        console.log(response);
+        alert('error occured');
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
   return (
   <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
     <Header />
@@ -106,6 +120,11 @@ function ReceiptDetails(){
         </div>
 
         <div className="mt-4 text-center">
+          <button
+            onClick={()=>closeReceipt(receipt.id)}
+            className="bg-green-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-green-700 transition"
+          >Pay Receipt
+          </button>
           <button
             onClick={handlePrint}
             className="bg-blue-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-blue-700 transition"

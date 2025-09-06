@@ -8,6 +8,7 @@ import CreateReceipt from './pages/CreateReceipt';
 import NotFound from './pages/NotFound';
 import ReceiptDetails from './pages/ReceiptDetails';
 import Report from './pages/Report';
+import Categories from './pages/Categories';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/report" element={<Report />} />
         <Route path="/inventory" element={<Inventory />} />
+        <Route path='/categories' element={<Categories />} />
         <Route path="/pharmacies" element={<Pharmacies />} />
         <Route path="/create-receipt" element={<CreateReceipt />} />
         <Route path="/receipts" element={<Receipts />} />
