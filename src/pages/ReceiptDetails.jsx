@@ -19,6 +19,7 @@ function ReceiptDetails(){
       const response = await axios.get(`${baseUrl}/receipt/${id}/items`);
       if(response.status === 200){
         setReceipt(response.data.data[0].receipt);
+        console.log(response.data.data)
         setPharmacy(response.data.pharmacy[0]);
         setItems(response.data.data);
       }else{
@@ -98,6 +99,7 @@ function ReceiptDetails(){
               <thead className="">
                 <th>Quantity</th>
                 <th>Item</th>
+                <th>Notes</th>
                 <th>Unit Price</th>
                 <th>Total</th>
               </thead>
@@ -106,6 +108,7 @@ function ReceiptDetails(){
                 ( <tr className="my-1">
                   <td>{item.quantity} units</td>
                   <td>{item.item.item_name}</td>
+                  <td>{item.notes}</td>
                   <td>{item.price}$</td>
                   <td>{item.price * item.quantity}$</td>
                 </tr> )
@@ -120,21 +123,30 @@ function ReceiptDetails(){
         </div>
 
         <div className="mt-4 text-center">
+          {receipt.status === 'pending'?
           <button
             onClick={()=>closeReceipt(receipt.id)}
             className="bg-green-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-green-700 transition"
           >Pay Receipt
           </button>
+          : ''
+          }
+          
           <button
             onClick={handlePrint}
             className="bg-blue-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-blue-700 transition"
           >Print Receipt
           </button>
-          <button
-            onClick={()=>returnReceipt(receipt.id)}
-            className="bg-red-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-red-700 transition"
-          >Return Receipt
-          </button>
+          {
+            receipt.status != 'deleted' ?
+            <button
+              onClick={()=>returnReceipt(receipt.id)}
+              className="bg-red-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-red-700 transition"
+            >Return Receipt
+            </button>
+            : ''
+          }
+          
         </div>
       </div>
     )}

@@ -49,7 +49,7 @@ function CreateReceipt(){
     const [date, setDate] = useState(today);
     const [receiptItems , setReceiptItems] = useState([]);
     const options = items.map((item) => ({
-    value: item.item_id,
+    value: item.id,
     label: item.item_name,
     }));
     
@@ -112,7 +112,7 @@ function CreateReceipt(){
     const [receipt_id , set_receipt_id] = useState();
     async function createReceipt(){
         try{
-            console.log(pharmacies);
+            console.log(receiptItems);
             const receipt = {
                 'pharmacy_id': pharmacy_id,
                 'date': date
@@ -207,8 +207,9 @@ function CreateReceipt(){
                                             options={options}
                                             value={options.find(opt => opt.value === receiptItem.item_id)}
                                             onChange={(selected) => {
-                                                const selectedItem = items.find(item => item.item_id === selected.value);
+                                                const selectedItem = items.find(item => item.id === selected.value);
                                                 console.log(selectedItem);
+                                                
                                                 updateMultipleFields(receiptItem.receipt_item_id, {
                                                     item_id: selectedItem.id,
                                                     price_unit_ph: selectedItem.price_unit_ph,
@@ -218,7 +219,7 @@ function CreateReceipt(){
                                             }}
                                             className="w-[95%] m-1 mx-2 min-w-72"
                                         />
-                                    <Input type="text" className="" placeholder="notes..." onChange={(e)=>updateItem(receiptItem.receipt_item_id , 'notes' , )}/>
+                                    <Input type="text" className="" placeholder="notes..." onChange={(e)=>updateItem(receiptItem.receipt_item_id , 'notes' , e.target.value)}/>
                                     <div className="w-full flex items-center justify-start mx-1">
                                         <Input type="number" value={receiptItem.quantity} onChange={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , e.target.value))} placeholder="quantity" className="w-[25%] m-1" />
                                         <Button variant="outline" className="mx-1" onClick={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , receiptItem.quantity + 1))}>+</Button>

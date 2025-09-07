@@ -62,28 +62,32 @@ function Inventory(){
 
     async function getRequiredItems() {
         try {
-            const response = await axios.get(`${baseUrl}/getRequiredItems.php`);
-            if (response.data['success']) {
-                let fetchedItems = response.data['data'];
-
-                // Filter and update quantities
-                const updatedItems = fetchedItems.map(reqItem => {
-                    const matchingItem = items.find(filItem => filItem.item_id === reqItem.item_id);
-                    if (matchingItem) {
-                        const updatedQuantity = Math.max(0, reqItem.total_required_quantity - matchingItem.quantity);
-                        return { ...reqItem, total_required_quantity: updatedQuantity };
-                    }
-                    return reqItem;
-                }).filter(item => item.total_required_quantity > 0);
-                setRequiredItems(updatedItems);
-
-            } else {
-                alert('Error: ' + response.data.message);
+            const response = await axios.get(`${baseUrl}/required-items`);
+            if (response.status === 200) {
+                console.log("Required Items:", response.data.data);
+                const filteredItems = response.data.data.filter(item => item.missing !== 0);
+                setRequiredItems(filteredItems);
             }
         } catch (e) {
-            alert('Error: ' + e.message);
+            console.error("Error fetching required items:", e);
         }
     }
+    async function resolveMissingItems(){
+        try{
+            if(requiredItems.length === 0){
+                alert('no required items to resolve ^_^');
+                return;
+            }
+            const response = await axios.post(`${baseUrl}/resolve-missing`, {'missing': requiredItems});
+            if(response.status === 201){
+                getItems();
+                getRequiredItems();
+            }
+        }catch(e){
+            console.error("Error resolving required items:", e);
+        }
+    }
+
     useEffect(()=>{
         getItems(); 
         getcategories();
@@ -91,7 +95,7 @@ function Inventory(){
     }, []);
     useEffect(() => {
         if (items.length > 0) {
-            // getRequiredItems();
+            getRequiredItems();
         }
     }, [items]);
 
@@ -299,14 +303,21 @@ function Inventory(){
                 </form>
             )}
                 {/* required items */}
-                <div className="bg-white p-4 rounded-md shadow-md mx-4 mb-6">
-                    <h2 className="lg:text-2xl sm:text-lg font-bold text-red-500 mb-3">Required Items</h2>
-                    {requiredItems.map((reqItem) => (
-                        <div key={reqItem.id} className="text-red-600 border-b py-1">
-                            {reqItem.item_name} : {reqItem.total_required_quantity} unit needed
+                {
+                    requiredItems.length === 0 ? '' :
+                
+                    <div className="bg-white p-4 rounded-md shadow-md mx-4 mb-6">
+                        <div className="flex justify-between items-center ">
+                        <h2 className="lg:text-2xl sm:text-lg font-bold text-red-500 mb-3">Required Items</h2>
+                        <Button variant="danger" onClick={()=>resolveMissingItems()} >Resolve Missing</Button>
                         </div>
-                    ))}
-                </div>
+                        {requiredItems.map((reqItem) => (
+                            <div key={reqItem.item_id} className="text-red-600 border-b py-1">
+                                {reqItem.item_name} : {reqItem.missing} unit needed
+                            </div>
+                        ))}
+                    </div>
+                }
 
               
                 {/* inventory items */}

@@ -5,7 +5,12 @@ import dayjs from 'dayjs';
 function Receipt({className , receipt}){
     return (
         <div className={`flex flex-col items-center cursor-pointer bg-white shadow-md hover:scale-105 transition-all ease-out hover:shadow-lg shadow-blue-400 p-4 m-3 rounded-xl w-[90%]"> ${className} `}>
+            {
+            receipt.status === 'deleted' ? 
+            <div className="text-lg mb-3 bg-red-300 rounded-2xl px-3 py-1 text-blue-900">Deleted Receipt #{receipt.id}</div>
+            : 
             <div className="text-lg mb-3 bg-blue-100 rounded-2xl px-3 py-1 text-blue-900">Receipt #{receipt.id}</div>
+            }
             <div className="text-gray-500">{dayjs(receipt.created_at).format('MMMM DD, YYYY')}</div> 
             <div className="flex items-center justify-end text-xl">
                 <Store></Store>
