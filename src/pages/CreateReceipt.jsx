@@ -121,8 +121,6 @@ function CreateReceipt(){
                 alert('cant create empty receipt');
                 return;
             }
-            console.log("===========");
-            console.log(pharmacy_id);
             const response = await axios.post(`${baseUrl}/add-receipt` , {'pharmacy_id' : pharmacy_id});
             console.log(response);
             if(response.status === 201){
@@ -140,10 +138,27 @@ function CreateReceipt(){
             console.log(res);
             setReceiptItems([]);
             navigate('/receipts');
+            return response.data.data['id'];
         }catch(e){
             alert(e);
         }finally{
             setLoading(false);
+        }
+    }
+    async function saveDraft(){
+        const receipt_id = await createReceipt();
+        console.log(receipt_id)
+        try{
+            const response = await axios.patch(`${baseUrl}/update-r-status/${receipt_id}`, {'status' : 'draft'});
+            if(response.status === 201){
+
+            }else{
+                console.log(response);
+            }
+
+        }catch(e){
+            console.log(e);
+            alert(e);
         }
     }
     
@@ -248,7 +263,7 @@ function CreateReceipt(){
                                 <Button variant="" className="m-1 flex gap-3 bg-green-800 text-white">generating...</Button> :
                                 <Button onClick={()=>createReceipt()} variant="success" className="m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
                             }
-                            <Button variant="outline" className="m-1 flex gap-1"><Save></Save> save as draft</Button>
+                            <Button variant="outline" onClick={()=>saveDraft()} className="m-1 flex gap-1"><Save></Save> save as draft</Button>
                         </div>
                     </div>
                     

@@ -25,6 +25,7 @@ function ReceiptDetails(){
       const response = await axios.get(`${baseUrl}/receipt/${id}/items`);
       if(response.status === 200){
         setReceipt(response.data.data[0].receipt);
+        console.log(response.data.data[0].receipt)
         console.log(response.data.data)
         setPharmacy(response.data.pharmacy[0]);
         setItems(response.data.data);
@@ -157,7 +158,12 @@ function ReceiptDetails(){
         return;
       }
      setLoading(true);
+     const data = {
+      'receipt_total' : receipt.receipt_total - item.total
+     };
+     console.log(data)
      const response = await axios.delete(`${baseUrl}/receipt-item/${item.id}`);
+     const response_update = await axios.put(`${baseUrl}/update-receipt/${receipt.id}` , data)
      if(response.status === 201){
       getReceiptDetails();
      }else{
@@ -225,12 +231,26 @@ function ReceiptDetails(){
      };
     setReceiptItems([...receiptItems , newReceiptItem]);
   }
-  function saveItem(){
+  async function saveItem(){
     try{
-      
+      setLoading(true)
+      const data = {
+        'receipt_items' : receiptItems,
+        'receipt_id' : receipt.id
+      }
+      const response = await axios.post(`${baseUrl}/add-receipt-items`, data);
+      if(response.status === 201){
+        setReceiptItems([]);
+        setAdding(false);
+        getReceiptDetails();
+      }else{
+        console.log(response);
+      }
     }catch(e){
       console.log(e);
       alert(e);
+    }finally{
+      setLoading(false);
     }
   }
   return (
