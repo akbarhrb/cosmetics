@@ -17,6 +17,7 @@ function CreateReceipt(){
     const queryParams = new URLSearchParams(location.search);
     const preselectedPharmacyId = queryParams.get("pharmacy_id");
     const [pharmacy_id , set_pharmacy_id] = useState(preselectedPharmacyId);
+    const [loading , setLoading] = useState(false);
    
 
     const navigate = useNavigate();
@@ -45,8 +46,6 @@ function CreateReceipt(){
             console.error(error);
         });
     }
-    const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-    const [date, setDate] = useState(today);
     const [receiptItems , setReceiptItems] = useState([]);
     const options = items.map((item) => ({
     value: item.id,
@@ -112,11 +111,8 @@ function CreateReceipt(){
     const [receipt_id , set_receipt_id] = useState();
     async function createReceipt(){
         try{
+            setLoading(true);
             console.log(receiptItems);
-            const receipt = {
-                'pharmacy_id': pharmacy_id,
-                'date': date
-            }
             if(!pharmacy_id){
                 alert('choose pharmacy');
                 return;
@@ -146,6 +142,8 @@ function CreateReceipt(){
             navigate('/receipts');
         }catch(e){
             alert(e);
+        }finally{
+            setLoading(false);
         }
     }
     
@@ -182,7 +180,6 @@ function CreateReceipt(){
                                     <option key={pharmacy.id} value={pharmacy.id}>{pharmacy.pharmacy_name}</option>
                                 ))}
                             </SelectComp>  
-                            <Input type="date" value = {date} onChange={(e) => setDate(e.target.value)} className="w-[50%] m-1"/>
                         </div>
 
                         
@@ -212,6 +209,7 @@ function CreateReceipt(){
                                                 
                                                 updateMultipleFields(receiptItem.receipt_item_id, {
                                                     item_id: selectedItem.id,
+                                                    price :selectedItem.price_unit_ph,
                                                     price_unit_ph: selectedItem.price_unit_ph,
                                                     price_dozen: selectedItem.price_dozen,
                                                     price_unit_ind: selectedItem.price_unit_ind
@@ -226,7 +224,6 @@ function CreateReceipt(){
                                         <Button variant="outline" className="mx-1" onClick={(e)=> updateItem(receiptItem.receipt_item_id , "quantity" , Math.max(1 , receiptItem.quantity - 1))}>-</Button>
                                     </div>
                                     <SelectComp value={receiptItem.price} onChange={(e)=>updateItem(receiptItem.receipt_item_id , "price" , e.target.value)}  className="w-[25%] m-1 mx-2">
-                                        <option value={0}>select price</option>
                                         <option value={receiptItem.price_unit_ph} >pharmacies {receiptItem.price_unit_ph}$</option>
                                         <option value={receiptItem.price_dozen} >dozens {receiptItem.price_dozen}$</option>
                                         <option value={receiptItem.price_unit_ind}>indviduals {receiptItem.price_unit_ind}$</option>
@@ -246,7 +243,11 @@ function CreateReceipt(){
                             <div className="text-3xl my-3" >{receipt_total}$</div>
                         </div>
                         <div className="flex flex-row w-full justify-between items-start">
-                            <Button onClick={()=>createReceipt()} variant="success" className="m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
+                            {
+                                loading ? 
+                                <Button variant="" className="m-1 flex gap-3 bg-green-800 text-white">generating...</Button> :
+                                <Button onClick={()=>createReceipt()} variant="success" className="m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
+                            }
                             <Button variant="outline" className="m-1 flex gap-1"><Save></Save> save as draft</Button>
                         </div>
                     </div>
