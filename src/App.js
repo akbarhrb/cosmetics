@@ -9,9 +9,13 @@ import NotFound from './pages/NotFound';
 import ReceiptDetails from './pages/ReceiptDetails';
 import Report from './pages/Report';
 import Categories from './pages/Categories';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={3000} />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />} />
@@ -25,6 +29,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
+    </>
+
     
   );
 }

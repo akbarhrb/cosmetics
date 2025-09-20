@@ -7,6 +7,8 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { MapPin , Phone , Edit  } from "lucide-react";
 import {Card, CardHeader, CardTitle, CardContent ,CardDescription} from '../components/Card';
+import { toast } from "react-toastify";
+
 function Pharmacies(){
     const baseUrl = process.env.REACT_APP_API_URL;
     const [showForm, setShowForm] = useState(false);
@@ -28,11 +30,13 @@ function Pharmacies(){
       setLoading(true);
       try{
         const response = await axios.get(`${baseUrl}/pharmacies`);
-        console.log(response.data.data);
         setPharmacies(response.data.data);  
-        setLoading(false);
+        toast.success('Pharmacies Loaded Successfully')
       }catch(e){
         console.error(e);
+        toast.error('NETWORK ERROR' . e)
+      }finally{
+        setLoading(false);
       }
     }
     useEffect(()=>{
@@ -40,6 +44,7 @@ function Pharmacies(){
     }, []);
 
     async function addPharmacy(e) {
+      setLoading(true);
   e.preventDefault();
 
   // Trim input values to avoid spaces-only inputs
@@ -66,11 +71,15 @@ function Pharmacies(){
         setOwner('');
         setPhoneNumber('');
         setAddress('');
+        toast.success('Pharmacy Added Successfully')
+        setShowForm(false);
       } else {
-        alert(`Failed to add pharmacy: ${response.status}`);
+        toast.error('NETWORK ERROR' . response.data.error)
       }
     } catch (error) {
-      alert(`Something went wrong. ${error}`);
+      toast.error('NETWORK ERROR' . error)
+    }finally{
+      setLoading(false);
     }
   } else {
     alert("Please fill in all fields.");
@@ -140,7 +149,11 @@ function Pharmacies(){
                     <Input type="text" value={address} onChange={(e)=>setAddress(e.target.value)} className="w-full" placeholder="Enter address..."/>
                   </div>
 
-                  <Button type="submit" onClick={(e)=> {updateForm? updatePharmacy(e): addPharmacy(e)} } variant="success" className="w-[100%]" >{updateForm ? "Update" : "Submit"}</Button>
+                  {
+                    loading ?
+                    <Button variant="success" className="w-[100%]" >Submitting...</Button>:
+                    <Button type="submit" onClick={(e)=> {updateForm? updatePharmacy(e): addPharmacy(e)} } variant="success" className="w-[100%]" >{updateForm ? "Update" : "Submit"}</Button>
+                  }
                 </form>
               )}
               {/* Pharmacies List */}

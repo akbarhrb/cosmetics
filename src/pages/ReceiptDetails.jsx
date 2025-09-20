@@ -9,6 +9,7 @@ import SelectComp from "../components/SelectComp";
 import Select from "react-select";
 import { Trash } from "lucide-react";
 import {v4 as uuid} from 'uuid';
+import { toast } from "react-toastify";
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -25,15 +26,15 @@ function ReceiptDetails(){
       const response = await axios.get(`${baseUrl}/receipt/${id}/items`);
       if(response.status === 200){
         setReceipt(response.data.data[0].receipt);
-        console.log(response.data.data[0].receipt)
-        console.log(response.data.data)
         setPharmacy(response.data.pharmacy[0]);
         setItems(response.data.data);
       }else{
         console.log(response);
+        toast.error('NETWORK ERROR' . response.data.error)
       }
     }catch(e){
       console.log(e);
+      toast.error('NETWORK ERROR' . e)
     }finally{
       setLoading(false);
     }
@@ -48,6 +49,7 @@ function ReceiptDetails(){
         })
         .catch((error) => {
             console.error(error);
+            toast.error('NETWORK ERROR' . error)
         });
     }
     const options = newitems.map((item) => ({
@@ -79,11 +81,14 @@ function ReceiptDetails(){
       const response =  await axios.delete(`${baseUrl}/delete-receipt/${id}`);
       if(response.status === 201){
         navigator('/receipts');
+        toast.success('Receipt Deleted Successfully')
       }else{
         console.log(response);
+        toast.error('NETWORK ERROR' . response.data.error)
       }
     }catch(e){
       console.log(e);
+      toast.error('NETWORK ERROR' . e)
     }
   }
   
@@ -93,12 +98,14 @@ function ReceiptDetails(){
       const response = await axios.post(`${baseUrl}/close-receipt` , {'receipt_id' : id});
       if(response.status == 200){
         navigator('/receipts');
+        toast.success('Receipt Closed Successfully')
       }else{
         console.log(response);
-        alert('error occured');
+        toast.error('NETWORK ERROR' . response.data.error)
       }
     }catch(e){
       console.log(e);
+      toast.error('NETWORK ERROR' . e)
     }
   }
   async function increment(item){
@@ -111,10 +118,10 @@ function ReceiptDetails(){
       'quantity':item.quantity + 1,
       'total':(item.quantity +1 ) * item.price,
      }
-     console.log(data);
      const response = await axios.put(`${baseUrl}/receipt-item/${item.id}`, data);
      if(response.status === 201){
       getReceiptDetails();
+      toast.success('Quantity Updated Successfully')
      }else{
       console.log(response);
       alert('error occured');
@@ -136,10 +143,10 @@ function ReceiptDetails(){
         'quantity':item.quantity - 1,
         'total':(item.quantity - 1 ) * item.price,
       }
-      console.log(data);
       const response = await axios.put(`${baseUrl}/receipt-item/${item.id}`, data);
       if(response.status === 201){
         getReceiptDetails();
+        toast.success('Quantity Updated Successfully')
       }else{
         console.log(response);
         alert('error occured');
@@ -161,11 +168,11 @@ function ReceiptDetails(){
      const data = {
       'receipt_total' : receipt.receipt_total - item.total
      };
-     console.log(data)
      const response = await axios.delete(`${baseUrl}/receipt-item/${item.id}`);
      const response_update = await axios.put(`${baseUrl}/update-receipt/${receipt.id}` , data)
      if(response.status === 201){
       getReceiptDetails();
+      toast.success('Item Deleted Successfully')
      }else{
       console.log(response);
       alert('error occured');
@@ -243,12 +250,31 @@ function ReceiptDetails(){
         setReceiptItems([]);
         setAdding(false);
         getReceiptDetails();
+        toast.success('Item Added Successfully')
       }else{
         console.log(response);
+        toast.error('NETWORK ERROR' . response.data.error)
       }
     }catch(e){
       console.log(e);
-      alert(e);
+      toast.error('NETWORK ERROR' . e)
+    }finally{
+      setLoading(false);
+    }
+  }
+  async function submitReceipt(id){
+    try{
+      setLoading(true);
+      const response = await axios.patch(`${baseUrl}/update-r-status/${id}`, {'status' : 'pending'});
+      if(response.status === 200){
+        navigator('/receipts');
+      }else{
+        console.log(response);
+        toast.error('NETWORK ERROR' . response.data.error)
+      }
+    }catch(e){
+      console.log(e)
+      toast.error('NETWORK ERROR' . e)
     }finally{
       setLoading(false);
     }
@@ -395,6 +421,14 @@ function ReceiptDetails(){
         </div>
 
         <div className="mt-4 text-center">
+          {receipt.status === 'draft'?
+          <button
+            onClick={()=>submitReceipt(receipt.id)}
+            className="bg-green-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-green-700 transition"
+          >Submit Receipt
+          </button>
+          : ''
+          }
           {receipt.status === 'pending'?
           <button
             onClick={()=>closeReceipt(receipt.id)}

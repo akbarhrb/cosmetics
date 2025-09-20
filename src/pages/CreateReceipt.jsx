@@ -8,6 +8,8 @@ import Select from "react-select";
 import axios from "axios";
 import {v4 as uuid} from 'uuid';
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const baseUrl = process.env.REACT_APP_API_URL;
 
@@ -126,7 +128,7 @@ function CreateReceipt(){
             if(response.status === 201){
                 set_receipt_id(response.data.data['id']);
             }else{
-                alert(response.data['message']);
+                toast.error("NETWORK ERROR OCCURED". response.data['message']);
             }
             const rcpItems = {
                 'receipt_id' : response.data.data['id'],
@@ -140,25 +142,25 @@ function CreateReceipt(){
             navigate('/receipts');
             return response.data.data['id'];
         }catch(e){
-            alert(e);
+            toast.error("NETWORK ERROR OCCURED" . e);
         }finally{
             setLoading(false);
         }
     }
     async function saveDraft(){
         const receipt_id = await createReceipt();
-        console.log(receipt_id)
         try{
             const response = await axios.patch(`${baseUrl}/update-r-status/${receipt_id}`, {'status' : 'draft'});
-            if(response.status === 201){
-
+            if(response.status === 200){
+                toast.success("Draft saved successfully ✅");
             }else{
                 console.log(response);
+                toast.error("NETWORK ERROR OCCURED" . response.data.error);
             }
 
         }catch(e){
             console.log(e);
-            alert(e);
+            toast.error("NETWORK ERROR OCCURED" . e);
         }
     }
     
