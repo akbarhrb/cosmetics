@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import SelectComp from "../components/SelectComp";
 import { Edit } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const baseUrl = process.env.REACT_APP_API_URL;
 function Inventory(){
@@ -41,9 +42,11 @@ function Inventory(){
             setItems(res.data.data);
             setFilteredItems(res.data.data);
             setLoading(false); 
+            toast.success('Items Loaded Successfully');
         })
         .catch((error) => {
             console.error(error);
+            toast.error(`NETWORK ERROR OCCURED" ${error}`);
             setLoading(false); 
         });
     }
@@ -119,10 +122,11 @@ function Inventory(){
             cost,
             description,
         };
-        console.log(newItem);
         try{
+            setLoading(true);
             const response = await axios.post(`${baseUrl}/add-item`, newItem);
             if (response.status === 201) {
+                setShowForm(false);
                 set_item_name('');
                 set_item_color('');
                 set_quantity('');
@@ -132,13 +136,14 @@ function Inventory(){
                 set_cost('');
                 set_description('');
                 set_cat_id();
-                setShowForm(false);
                 getItems(); // refresh list
             } else {
-                alert(response.data.error || "Something went wrong.");
+                toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
             }
         }catch(error){
-            alert(error);  
+            toast.error(`NETWORK ERROR OCCURED ${error}`);
+        }finally{
+            setLoading(false);
         }
     }
 
@@ -171,6 +176,7 @@ function Inventory(){
         set_description(item.description);
     }
     async function updateItem(e, item_id){
+        setLoading(true);
         e.preventDefault();
         const data = {
             'item_id' : item_id,
@@ -200,11 +206,14 @@ function Inventory(){
                 setShowForm(false);
                 setProcess('Add New Item');
                 getItems();
+                toast.success('Item Updated Successfully')
             }else{
-                alert(response.data.data.message);
+                toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
             }
         }catch(e){
-            alert(e);
+            toast.error(`NETWORK ERROR OCCURED ${e}`);
+        }finally{
+            setLoading(false);
         }
     }
     async function softDeleteItem(item_id) {
@@ -221,15 +230,15 @@ function Inventory(){
             set_price_unit_ph();
             set_cost();
             set_description('');
-            alert("Item deleted.");
+            toast.success('Item Deleted Successfully');
             setProcess("Add New Item");
             setShowForm(false);
             getItems(); 
         }else {
-        alert("Failed to delete: " + response.data.data.message);
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
         }
     } catch (e) {
-        alert("Error deleting item: " + e.message);
+        toast.error(`NETWORK ERROR OCCURED ${e}`);
     }
     }
 

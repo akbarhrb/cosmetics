@@ -30,11 +30,11 @@ function ReceiptDetails(){
         setItems(response.data.data);
       }else{
         console.log(response);
-        toast.error('NETWORK ERROR' . response.data.error)
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
       }
     }catch(e){
       console.log(e);
-      toast.error('NETWORK ERROR' . e)
+      toast.error(`NETWORK ERROR OCCURED ${e}`);
     }finally{
       setLoading(false);
     }
@@ -49,7 +49,7 @@ function ReceiptDetails(){
         })
         .catch((error) => {
             console.error(error);
-            toast.error('NETWORK ERROR' . error)
+            toast.error(`NETWORK ERROR OCCURED ${error}`);
         });
     }
     const options = newitems.map((item) => ({
@@ -84,11 +84,11 @@ function ReceiptDetails(){
         toast.success('Receipt Deleted Successfully')
       }else{
         console.log(response);
-        toast.error('NETWORK ERROR' . response.data.error)
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
       }
     }catch(e){
       console.log(e);
-      toast.error('NETWORK ERROR' . e)
+      toast.error(`NETWORK ERROR OCCURED ${e}`);
     }
   }
   
@@ -101,11 +101,11 @@ function ReceiptDetails(){
         toast.success('Receipt Closed Successfully')
       }else{
         console.log(response);
-        toast.error('NETWORK ERROR' . response.data.error)
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
       }
     }catch(e){
       console.log(e);
-      toast.error('NETWORK ERROR' . e)
+      toast.error(`NETWORK ERROR OCCURED ${e}`);
     }
   }
   async function increment(item){
@@ -124,11 +124,11 @@ function ReceiptDetails(){
       toast.success('Quantity Updated Successfully')
      }else{
       console.log(response);
-      alert('error occured');
+      toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
      }
     }catch(e){
       console.log(e);
-      alert('Error Occured', e);
+      toast.error(`NETWORK ERROR OCCURED ${e}`);
     }finally{
       setLoading(false);
     }
@@ -149,11 +149,11 @@ function ReceiptDetails(){
         toast.success('Quantity Updated Successfully')
       }else{
         console.log(response);
-        alert('error occured');
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
       }
       }catch(e){
         console.log(e);
-        alert('Error Occured', e);
+        toast.error(`NETWORK ERROR OCCURED ${e}`);
       }finally{
         setLoading(false);
       }
@@ -161,7 +161,7 @@ function ReceiptDetails(){
   async function deleteItem(item){
     try{
       if(items.length === 1){
-        alert('cant delete last item');
+        toast.error('Can Not Delete Last Item From Receipt');
         return;
       }
      setLoading(true);
@@ -175,11 +175,11 @@ function ReceiptDetails(){
       toast.success('Item Deleted Successfully')
      }else{
       console.log(response);
-      alert('error occured');
+      toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
      }
     }catch(e){
       console.log(e);
-      alert('Error Occured', e);
+      toast.error(`NETWORK ERROR OCCURED ${e}`);
     }finally{
       setLoading(false);
     }
@@ -253,7 +253,7 @@ function ReceiptDetails(){
         toast.success('Item Added Successfully')
       }else{
         console.log(response);
-        toast.error('NETWORK ERROR' . response.data.error)
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
       }
     }catch(e){
       console.log(e);
@@ -270,11 +270,11 @@ function ReceiptDetails(){
         navigator('/receipts');
       }else{
         console.log(response);
-        toast.error('NETWORK ERROR' . response.data.error)
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
       }
     }catch(e){
       console.log(e)
-      toast.error('NETWORK ERROR' . e)
+      toast.error(`NETWORK ERROR OCCURED ${e}`);
     }finally{
       setLoading(false);
     }
@@ -387,7 +387,6 @@ function ReceiptDetails(){
 
           <div className="mb-4">
               <p><span className="font-semibold">Store Name:</span> {pharmacy['pharmacy_name']}</p>
-              <p><span className="font-semibold">Store Owner:</span> {pharmacy['pharmacy_owner']}</p>
               <p><span className="font-semibold">Delivre Date:</span> {dayjs(new Date()).add(1,'day').format('DD-MM-YYYY')}</p>
           </div>
           <div>

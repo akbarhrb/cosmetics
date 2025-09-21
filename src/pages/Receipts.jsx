@@ -3,6 +3,7 @@ import Button from "../components/Button";
 import Header from "../components/Header";
 import Receipt from "../components/Receipt";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 function Receipts(){
     const baseUrl = process.env.REACT_APP_API_URL;
     const [receipts , setReceipts] = useState([]);
@@ -11,15 +12,20 @@ function Receipts(){
         setStatus(receipts_status);
         try{
             const response = await axios.get(`${baseUrl}/receipts/${receipts_status}`);
-            console.log(response);
+            const response_clear = await axios.get(`${baseUrl}/delete-empty-receipts`);
             if(response.status === 200){
                 setReceipts(response.data.receipts);
-                
+                toast.success('Receipts Loaded Successfully');
             }else{
-                console.log(`error:  ${response.data.data['error']}` );
+                toast.error(`NETWORK ERROR OCCURED" ${response.data.error}`);
+            }
+            if(response_clear.status === 200){
+                console.log(`nb of deleted receipts: ${response_clear.data.count}`);
+            }else{
+                toast.error(`NETWORK ERROR OCCURED" ${response_clear.data.error}`);
             }
         }catch(e){
-            console.log(e);
+            toast.error(`NETWORK ERROR OCCURED" ${e}`);
         }
     }
     useEffect(()=>{

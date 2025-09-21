@@ -142,7 +142,7 @@ function CreateReceipt(){
             navigate('/receipts');
             return response.data.data['id'];
         }catch(e){
-            toast.error("NETWORK ERROR OCCURED" . e);
+            toast.error(`NETWORK ERROR OCCURED ${e}`);
         }finally{
             setLoading(false);
         }
@@ -155,12 +155,12 @@ function CreateReceipt(){
                 toast.success("Draft saved successfully ✅");
             }else{
                 console.log(response);
-                toast.error("NETWORK ERROR OCCURED" . response.data.error);
+                toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
             }
 
         }catch(e){
             console.log(e);
-            toast.error("NETWORK ERROR OCCURED" . e);
+            toast.error(`NETWORK ERROR OCCURED ${e}`);
         }
     }
     
