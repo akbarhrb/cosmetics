@@ -1,10 +1,10 @@
 import classNames from "classnames";
 
 function Button({ children, onClick, type = "button", className = "", variant = "default", ...props }) {
-  const baseStyles = "px-6 py-2 text-sm sm:text-sm md:text-md lg:text-lg rounded-lg font-medium transition focus:outline-none";
+  const baseStyles = "px-6 py-2 text-xs sm:text-sm md:text-md lg:text-lg rounded-lg font-medium transition focus:outline-none";
 
   const variants = {
-    white : "bg-white text-black hover:bg-gray-100 hover:shadow-md hover:shadow-blue-200",
+    white : "bg-white text-black hover:bg-gray-100",
     default: "bg-blue-600 text-white hover:bg-blue-700",
     outline: "border border-black-600 text-black-600 hover:bg-blue-100",
     danger: "bg-red-600 text-white hover:bg-red-700",

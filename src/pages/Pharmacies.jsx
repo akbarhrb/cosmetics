@@ -123,11 +123,11 @@ function Pharmacies(){
             <Header />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-lg sm:text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">Pharmacy Directory</h1>
-                        <p className="text-gray-600 mt-2 mr-3">Manage your pharmacy clients and their information</p>
+                    <div className="w-[70%]" >
+                        <h1 className="text-md sm:text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">Pharmacy Directory</h1>
+                        <p className="text-sm lg:text-md text-gray-600 mt-2 mr-3">Manage your pharmacy clients and their information</p>
                     </div>
-                    <Button className="" variant="success" onClick={toggleForm}>{showForm ? "Cancel" : "Add Pharmacy" }</Button>
+                    <button className="bg-green-600 text-white hover:bg-green-700 rounded-lg py-2 text-xs sm:text-sm md:text-md lg:text-lg px-2 lg:px-6" variant="success" onClick={toggleForm}>{showForm ? "Cancel" : "Add Pharmacy" }</button>
                 </div>
               {/* show form*/}
               {showForm && (

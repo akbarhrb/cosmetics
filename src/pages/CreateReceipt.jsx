@@ -173,9 +173,9 @@ function CreateReceipt(){
             
             <div className="flex flex-col items-center">
                 {/* main header */}
-                <div className="flex flex-col items-start sm:items-center md:items-center lg:items-start cursor-pointer w-[70%] my-6">
-                    <div className="text-3xl font-bold my-1">Create New Receipt</div>
-                    <div className="text-md text-gray-500 my-1 ">Generate a professional receipt for your pharmacy order</div>
+                <div className="flex flex-col lg:items-start items-center cursor-pointer w-[70%] my-6">
+                    <div className="text-lg lg:text-3xl font-bold my-1">Create New Receipt</div>
+                    <div className="text-sm lg:text-md text-gray-500 my-1 text-center ">Generate a professional receipt for your pharmacy order</div>
                 </div>
                 {/* the form */}
                 <form className=" flex flex-col items-center w-full">
@@ -184,9 +184,9 @@ function CreateReceipt(){
                     <div className="w-[95%] bg-white p-3 my-3 rounded-lg flex flex-col items-center lg:w-[70%] cursor-pointer md:w-[95%] sm:w-[95%]" >
 
                         {/* header select pharmacy */}
-                        <div className="flex flex-col w-full items-start p-1 mb-3 ">
-                            <div className="text-3xl font-bold mt-4 ">Pharmacy Information</div>
-                            <div className="text-md text-gray-500 mt-1">Select the pharmacy for this receipt</div>
+                        <div className="flex flex-col w-full lg:items-start p-1 mb-3 ">
+                            <div className="text-lg lg:text-3xl font-bold mt-4 ">Pharmacy Information</div>
+                            <div className="text-sm lg:text-md text-gray-500 mt-1">Select the pharmacy for this receipt</div>
                         </div>
 
                         {/* select pharmacy and date*/}
@@ -207,10 +207,10 @@ function CreateReceipt(){
                         {/* header item section */}
                         <div className="flex flex-row flex-wrap w-full items-center justify-between mb-3">
                             <div className="flex flex-col justify-start">
-                                <div className="text-3xl font-bold mt-4">Items</div>
-                                <div className="text-md text-gray-500 mt-1 ">Add products to this receipt</div>
+                                <div className="text-lg lg:text-3xl font-bold mt-4">Items</div>
+                                <div className="text-sm lg:text-md text-gray-500 mt-1 ">Add products to this receipt</div>
                             </div>
-                            <Button variant="success" onClick={()=>addReceiptItem()}>Add Item</Button> 
+                            {receiptItems.length < 1 ? <Button variant="success" onClick={()=>addReceiptItem()}>Add Item</Button> : null}
                         </div>
                         
                         {/* item section */}
@@ -251,19 +251,20 @@ function CreateReceipt(){
                                 </div>
                             );
                         })}
+                        {receiptItems.length >= 1 ? <Button variant="success" className="w-full m-4" onClick={()=>addReceiptItem()}>Add Item</Button> : null }
                         
                     </div>
                     {/* total receipt */}
                     <div className="w-[95%] lg:w-[70%] md:w-[95%] sm:w-[95%]  flex flex-col items-center justify-between bg-white p-3 my-3 rounded-lg cursor-pointer">
                         <div className="flex flex-row w-full ">
-                            <div className="text-3xl font-bold my-3 mx-1" >Total: </div>
-                            <div className="text-3xl my-3" >{receipt_total}$</div>
+                            <div className="text-lg lg:text-3xl font-bold my-3 mx-1" >Total: </div>
+                            <div className="text-lg lg:text-3xl my-3" >{receipt_total}$</div>
                         </div>
                         <div className="flex flex-row w-full justify-between items-start">
                             {
                                 loading ? 
                                 <Button variant="" className="m-1 flex gap-3 bg-green-800 text-white">generating...</Button> :
-                                <Button onClick={()=>createReceipt()} variant="success" className="m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
+                                <Button onClick={()=>createReceipt()} variant="success" className="lg:px-6 px-1 m-1 flex gap-3"><Printer></Printer> generate receipt</Button>
                             }
                             <Button variant="outline" onClick={()=>saveDraft()} className="m-1 flex gap-1"><Save></Save> save as draft</Button>
                         </div>

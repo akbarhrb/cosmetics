@@ -252,12 +252,12 @@ function Inventory(){
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-lg sm:text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">Inventory Management</h1>
-                        <p className="text-gray-600 mt-2">Track and manage your cosmetic products</p>
+                        <h1 className="text-sm sm:text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">Inventory Management</h1>
+                        <p className="text-xs lg:text-md text-gray-600 mt-2">Track and manage your cosmetic products</p>
                     </div>
-                    <div>
-                        <Button><Link to="/categories">Add Category</Link></Button>
-                        <Button className="mx-1 my-1" onClick={toggleButton} variant="success">{showForm? 'Cancel' : 'Add Product'}</Button>
+                    <div className="w-[50%] flex flex-col items-end justify-center">
+                        <Button className="w-[100%] lg:w-max"><Link to="/categories">Add Category</Link></Button>
+                        <Button className="lg:mx-1 my-1 w-[100%] lg:w-max" onClick={toggleButton} variant="success">{showForm? 'Cancel' : 'Add Product'}</Button>
                     </div>
                 </div>
                 {/* show form*/}
