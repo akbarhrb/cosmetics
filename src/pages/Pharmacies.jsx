@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { MapPin , Phone , Edit  } from "lucide-react";
 import {Card, CardHeader, CardTitle, CardContent ,CardDescription} from '../components/Card';
 import { toast } from "react-toastify";
+import SelectComp from '../components/SelectComp';
 
 function Pharmacies(){
     const baseUrl = process.env.REACT_APP_API_URL;
@@ -20,10 +21,11 @@ function Pharmacies(){
       setShowForm((prev) => !prev);
       
     };
-    const [pharmacyName , setName] = useState('');
+    const [pharmacy_name , set_pharmacy_name] = useState('');
     const [owner , setOwner] = useState('');
     const [phoneNumber , setPhoneNumber] = useState('');
     const [address , setAddress] = useState('');
+    const [status, set_status] = useState('opened');
     const [pharmacies , setPharmacies] = useState([]);
     
     async function getPharmacies(){
@@ -32,6 +34,7 @@ function Pharmacies(){
         const response = await axios.get(`${baseUrl}/pharmacies`);
         setPharmacies(response.data.data);  
         toast.success('Pharmacies Loaded Successfully')
+        console.log(response.data.data);
       }catch(e){
         console.error(e);
         toast.error('NETWORK ERROR' . e)
@@ -48,7 +51,7 @@ function Pharmacies(){
   e.preventDefault();
 
   // Trim input values to avoid spaces-only inputs
-  const trimmedName = pharmacyName?.trim();
+  const trimmedName = pharmacy_name?.trim();
   const trimmedOwner = owner?.trim();
   const trimmedPhone = phoneNumber?.trim();
   const trimmedAddress = address?.trim();
@@ -66,8 +69,8 @@ function Pharmacies(){
 
       // Assuming the backend returns 201 on success
       if (response.status === 201) {
-        setPharmacies([...pharmacies, newPharmacy]);
-        setName('');
+        getPharmacies();
+        set_pharmacy_name('');
         setOwner('');
         setPhoneNumber('');
         setAddress('');
@@ -99,18 +102,41 @@ function Pharmacies(){
         }
       }
       setIdToUpdate(pharmacy.id);
-      setName(pharmacy.pharmacy_name);
+      set_pharmacy_name(pharmacy.pharmacy_name);
       setOwner(pharmacy.pharmacy_owner);
       setPhoneNumber(pharmacy.phone_number);
       setAddress(pharmacy.address);
+      set_status(pharmacy.status);
     }
-    function updatePharmacy(e){
+    async function updatePharmacy(e){
       e.preventDefault();
+      try{
+        const data = {
+          'pharmacy_name': pharmacy_name,
+          'pharmacy_owner': owner,
+          'phone_number': phoneNumber,
+          'address' : address ,
+          'status' : status
+        }
+        console.log(data)
+        const response = await axios.put(`${baseUrl}/update-pharmacy/${idToUpdate}` , data);
+        if(response.status === 200){
+          toast.success(`Pharmacy ${pharmacy_name} updated successfully`);
+          getPharmacies();
+        }else{
+          console.log(response);
+          toast.error(`NETWORK ERROR ${response.data.error}`);
+        }
+
+      }catch(e){
+        console.log(e);
+        toast.error(`NETWORK ERROR ${e}`);
+      }
 
       setUpdateForm(false);
       setShowForm(false);
       setIdToUpdate(null);
-      setName('');
+      set_pharmacy_name('');
       setOwner('');
       setPhoneNumber();
       setAddress('');
@@ -134,7 +160,7 @@ function Pharmacies(){
                 <form className="mt-6 mb-6 space-y-4 p-4 border rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out opacity-100 scale-100 animate-fade-in">
                   <div>
                     <label className="block mb-1 text-gray-700">Pharmacy Name</label>
-                    <Input type="text" value={pharmacyName} onChange={(e)=>setName(e.target.value)} placeholder="Enter pharmacy name" className="w-full"/>
+                    <Input type="text" value={pharmacy_name} onChange={(e)=>set_pharmacy_name(e.target.value)} placeholder="Enter pharmacy name" className="w-full"/>
                   </div>
                   <div>
                     <label className="block mb-1 text-gray-700">Owner</label>
@@ -147,6 +173,13 @@ function Pharmacies(){
                   <div>
                     <label className="block mb-1 text-gray-700">Address</label>
                     <Input type="text" value={address} onChange={(e)=>setAddress(e.target.value)} className="w-full" placeholder="Enter address..."/>
+                  </div>
+                  <div>
+                    <label className="block mb-1 text-gray-700">Pharmacy Status</label>
+                    <SelectComp name="" id="" value={status} onChange={(e)=>set_status(e.target.value)}>
+                      <option value="opened">opened</option>
+                      <option value="closed">closed</option>
+                    </SelectComp>
                   </div>
 
                   {
@@ -194,16 +227,20 @@ function Pharmacies(){
                       </div>
                       <div>
                         <span className="text-gray-500">Last Order:</span>
-                        <div className="font-semibold text-gray-900">{dayjs(pharmacy.updated_at).format('DD-MM-YYYY')}</div>
+                        <div className="font-semibold text-gray-900">{dayjs(pharmacy.last_order_date).format('DD-MM-YYYY') === "Invalid Date" ?  "No Orders Yet" : dayjs(pharmacy.last_order_date).format('DD-MM-YYYY')}</div>
                       </div>
                     </div>
                   </div>
                   <div className="pt-3 flex flex-row">
-                    <Button variant="outline" className="w-full">
-                      <Link to={`/create-receipt?pharmacy_id=${pharmacy.id}`} className="flex items-center justify-center w-full">
-                        Create Receipt
-                      </Link>
-                    </Button>
+                    {
+                      pharmacy.status === 'closed' ? <Button variant="danger" className="bg-red-600 rounded-lg text-white text-center text-sm lg:text-lg">closed</Button> :
+                    
+                      <Button variant="outline" className="w-full">
+                        <Link to={`/create-receipt?pharmacy_id=${pharmacy.id}`} className="flex items-center justify-center w-full">
+                          Create Receipt
+                        </Link>
+                      </Button>
+                    }
                     
                     <Edit onClick={()=> EditPharmacy(pharmacy.id)} className="w-fit h-full p-3 text-white bg-green-500 rounded-xl mx-2 hover:bg-green-600 transition-all ease-in cursor-pointer "/>
                   </div>
