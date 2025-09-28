@@ -25,8 +25,9 @@ function ReceiptDetails(){
     try{
       const response = await axios.get(`${baseUrl}/receipt/${id}/items`);
       if(response.status === 200){
+        console.log(response);
         setReceipt(response.data.data[0].receipt);
-        setPharmacy(response.data.pharmacy[0]);
+        setPharmacy(response.data.pharmacy);
         setItems(response.data.data);
       }else{
         console.log(response);
@@ -75,7 +76,7 @@ function ReceiptDetails(){
 
   const navigator = useNavigate();
 
-  async function returnReceipt(id){
+  async function deleteReceipt(id){
     try{
       setLoading(true);
       const response =  await axios.delete(`${baseUrl}/delete-receipt/${id}`);
@@ -89,13 +90,35 @@ function ReceiptDetails(){
     }catch(e){
       console.log(e);
       toast.error(`NETWORK ERROR OCCURED ${e}`);
+    }finally{
+      setLoading(false);
+    }
+  }
+  
+  async function returnReceipt(id){
+    try{
+      setLoading(true);
+      const response =  await axios.delete(`${baseUrl}/return-receipt/${id}`);
+      if(response.status === 200){
+        navigator('/receipts');
+        toast.success('Receipt Deleted Successfully')
+      }else{
+        console.log(response);
+        toast.error(`NETWORK ERROR OCCURED ${response.data.error}`);
+      }
+    }catch(e){
+      console.log(e);
+      toast.error(`NETWORK ERROR OCCURED ${e}`);
+    }finally{
+      setLoading(false);
     }
   }
   
   async function closeReceipt(id){
     try{
       setLoading(true);
-      const response = await axios.post(`${baseUrl}/close-receipt` , {'receipt_id' : id});
+      console.log(pharmacy.id);
+      const response = await axios.post(`${baseUrl}/close-receipt` , {'receipt_id' : id, 'pharmacy_id': pharmacy.id});
       if(response.status == 200){
         navigator('/receipts');
         toast.success('Receipt Closed Successfully')
@@ -443,13 +466,22 @@ function ReceiptDetails(){
           >Print Receipt
           </button>
           {
-            receipt.status != 'deleted' ?
+            receipt.status != 'deleted' && receipt.status != 'closed'?
+            <button
+              onClick={()=>deleteReceipt(receipt.id)}
+              className="bg-red-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-red-700 transition"
+            >Delete Receipt
+            </button>
+            : ''
+          }
+          {
+            receipt.status === 'closed' ?
             <button
               onClick={()=>returnReceipt(receipt.id)}
               className="bg-red-600 text-white px-6 py-2 mx-1 my-1 rounded-lg hover:bg-red-700 transition"
             >Return Receipt
             </button>
-            : ''
+            : null
           }
           
         </div>
