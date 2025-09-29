@@ -111,6 +111,7 @@ function Pharmacies(){
     async function updatePharmacy(e){
       e.preventDefault();
       try{
+        setLoading(true);
         const data = {
           'pharmacy_name': pharmacy_name,
           'pharmacy_owner': owner,
@@ -131,6 +132,8 @@ function Pharmacies(){
       }catch(e){
         console.log(e);
         toast.error(`NETWORK ERROR ${e}`);
+      }finally{
+        setLoading(false);
       }
 
       setUpdateForm(false);
@@ -200,6 +203,9 @@ function Pharmacies(){
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {pharmacies.map((pharmacy) => (
             <Card key={pharmacy.id} className="">
+              {
+              pharmacy.status === 'closed' ? <Button variant="danger" className="bg-red-600 rounded-lg text-white text-center text-sm lg:text-lg">closed</Button> : null
+              }
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
@@ -209,7 +215,7 @@ function Pharmacies(){
                   
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="">
                 <div className="space-y-3 mt-3">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Phone className="h-4 w-4" />
@@ -231,16 +237,19 @@ function Pharmacies(){
                       </div>
                     </div>
                   </div>
-                  <div className="pt-3 flex flex-row">
-                    {
-                      pharmacy.status === 'closed' ? <Button variant="danger" className="bg-red-600 rounded-lg text-white text-center text-sm lg:text-lg">closed</Button> :
-                    
-                      <Button variant="outline" className="w-full">
-                        <Link to={`/create-receipt?pharmacy_id=${pharmacy.id}`} className="flex items-center justify-center w-full">
+                  <div className="pt-3 w-full flex flex-row"> 
+                      {
+                        pharmacy.status === 'closed' ? 
+                        <Button variant="outline" className="w-full" onClick={(e)=>{toast.error('Pharmacy is recently closed')}}>
                           Create Receipt
-                        </Link>
-                      </Button>
-                    }
+                        </Button>
+                        :
+                        <Button variant="outline" className="w-full">
+                          <Link to={`/create-receipt?pharmacy_id=${pharmacy.id}`} className="flex items-center justify-center w-full">
+                            Create Receipt
+                          </Link>
+                        </Button>
+                      }
                     
                     <Edit onClick={()=> EditPharmacy(pharmacy.id)} className="w-fit h-full p-3 text-white bg-green-500 rounded-xl mx-2 hover:bg-green-600 transition-all ease-in cursor-pointer "/>
                   </div>
