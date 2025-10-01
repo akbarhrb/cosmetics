@@ -26,7 +26,7 @@ function App() {
         <Route path="/create-receipt" element={<CreateReceipt />} />
         <Route path="/receipts" element={<Receipts />} />
         <Route path="/receipt/:id" element={<ReceiptDetails />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<Index />} />
       </Routes>
     </BrowserRouter>
     </>

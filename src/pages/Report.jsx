@@ -5,10 +5,13 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Spinner from "../components/Spinner";
+import { toast } from "react-toastify";
 
 
 function Report(){
     const baseUrl = process.env.REACT_APP_API_URL;
+    const [loading, setLoading] = useState(false);
 
     const today = new Date().toISOString().split("T")[0];
     const now = new Date();
@@ -24,6 +27,7 @@ function Report(){
     const [total_cost , set_total_cost] = useState(0);
 
     async function getReport(){
+        setLoading(true);
         const data = {
             'from_date' : from_date,
             'to_date' : to_date
@@ -38,7 +42,10 @@ function Report(){
             set_receipts_count(response.data.receipts_count);
             set_total_cost(response.data.total_cost);
         }catch(e){
+            toast.error(`${e}`);
             console.log(e);
+        }finally{
+            setLoading(false);
         }
     }
     useEffect(()=>{
@@ -78,15 +85,25 @@ function Report(){
                     </div>
                     
                     <div className="flex items-end">
+                        {
+                            loading ? 
+                        <Button className="bg-blue-900 hover:bg-blue-950 cursor-wait">
+                            Generating...
+                        </Button>
+                        :
                         <Button className="bg-blue-600 hover:bg-blue-700" onClick={()=>getReport()}>
                         Generate Report
                         </Button>
+                        }
                     </div>
                     </div>
                 </CardContent>
                 </Card>
 
                 {/* Key Metrics */}
+                {
+                    loading ? <Spinner /> : 
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
                 <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -146,6 +163,7 @@ function Report(){
                     </CardContent>
                 </Card>
                 </div>
+                }
             </main>
         </div>
 
