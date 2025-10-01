@@ -58,19 +58,19 @@ function Report(){
             <Header />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Page Header */}
-                <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Business Reports</h2>
-                <p className="text-gray-600">Track your business performance and analyze sales data</p>
+                <div className="mb-8 text-center">
+                <h2 className="lg:text-3xl text-lg font-bold text-gray-900 mb-2">Business Reports</h2>
+                <p className="text-gray-600 lg:text-lg text-sm">Track your business performance and analyze sales data</p>
                 </div>
 
                 {/* Date Range Filter */}
                 <Card className="mb-8 bg-white shadow-lg">
                 <CardHeader>
-                    <CardTitle className="flex items-center">
+                    <CardTitle className="flex items-center lg:text-3xl text-lg">
                     <CalendarIcon className="mr-2 h-5 w-5" />
                     Date Range
                     </CardTitle>
-                    <p className="text-black" >Select date range to filter reports</p>
+                    <p className="text-black lg:text-lg text-sm" >Select date range to filter reports</p>
                 </CardHeader>
                 <CardContent>
                     <div className="flex flex-col sm:flex-row gap-4">
@@ -84,7 +84,7 @@ function Report(){
                         <Input type="date" value={to_date} onChange={(e)=>set_to_date(e.target.value)} />
                     </div>
                     
-                    <div className="flex items-end">
+                    <div className="flex items-end justify-center">
                         {
                             loading ? 
                         <Button className="bg-blue-900 hover:bg-blue-950 cursor-wait">
